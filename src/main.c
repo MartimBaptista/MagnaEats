@@ -28,7 +28,7 @@ void main_args(int argc, char* argv[], struct main_data* data) {
     /* remove this or implement as feature
     if (argc != 6)
         TODO;
-        printf("Nao colocou o numero argumentos certo, tente novamente");
+        printf("Nao colocou o numero argumentos certo, tente novamente \n");
         exit(0);
     */
    //Putting args in struct "data"
