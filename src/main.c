@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 void main_args(int argc, char* argv[], struct main_data* data) {
     /* remove this or implement as feature
     if (argc != 6)
-        TODO;
+        TODO?
         printf("Nao colocou o numero argumentos certo, tente novamente \n");
         exit(0);
     */
@@ -37,4 +37,18 @@ void main_args(int argc, char* argv[], struct main_data* data) {
    data->n_clients = argv[3];
    data->n_drivers = argv[4];
    data->n_restaurants = argv[5];
+}
+
+/*not sure about this one */
+void create_dynamic_memory_buffers(struct main_data* data) {
+    data->restaurant_pids = create_dynamic_memory(data->n_restaurants);
+    data->driver_pids = create_dynamic_memory(data->n_drivers);
+    data->client_pids = create_dynamic_memory(data->n_clients);
+
+    data->restaurant_stats = create_dynamic_memory(data->n_restaurants);
+    data->driver_stats = create_dynamic_memory(data->n_drivers);
+    data->client_stats = create_dynamic_memory(data->n_clients);
+}
+void create_shared_memory_buffers(struct main_data* data, struct communication_buffers* buffers) {
+    
 }

@@ -41,7 +41,9 @@ void* create_dynamic_memory(int size){
     return buffer;
 }
 
-//void destroy_shared_memory(char* name, void* ptr, int size);
+void destroy_shared_memory(char* name, void* ptr, int size){
+    
+}
 
 //void destroy_dynamic_memory(void* ptr);
 
