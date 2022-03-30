@@ -1,6 +1,6 @@
 TODO make sure is correct
 magnaeats: client.o driver.o main.o memory.o process.o restaurant.o
-	gcc obj/client.o obj/driver.o obj/main.o obj/memory.o obj/process.o obj/restaurant.o -o magnaeats
+	gcc obj/client.o obj/driver.o obj/main.o obj/memory.o obj/process.o obj/restaurant.o -o magnaeats -lrt
 
 client.o: client.c main.c memory.c
 	gcc -c src/client.c src/main.c src/memory.c -c -I include
