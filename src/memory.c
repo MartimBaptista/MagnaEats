@@ -1,4 +1,5 @@
-#include "memory.h"
+//#include "memory.h"
+#include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/mman.h>
@@ -42,18 +43,50 @@ void* create_dynamic_memory(int size){
 }
 
 void destroy_shared_memory(char* name, void* ptr, int size){
-    
+    if (munmap(ptr, size) == -1){
+        perror("Failed to unmap shared memory");
+        exit(1);
+    }
+    if (shm_unlink(name) == -1){
+        perror("Failed to unlink shared memory");
+        exit(1);
+    }
 }
 
-//void destroy_dynamic_memory(void* ptr);
+void destroy_dynamic_memory(void* ptr){
+    free(ptr);
+    //TODO way to dettec fail
+}
 
-//void write_main_rest_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op);
+void write_main_rest_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
+    struct operation* it = buffer->buffer;
+    for (size_t i = 0; i < buffer_size; i++)
+    {
+        if (buffer->ptrs[i] == 0)
+        {
+            it = op;
+            buffer->ptrs[i] = 1;
+        }
+        it++;
+    }
+}
 
 //void write_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op);
 
 //void write_driver_client_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op);
 
-//void read_main_rest_buffer(struct rnd_access_buffer* buffer, int rest_id, int buffer_size, struct operation* op);
+void read_main_rest_buffer(struct rnd_access_buffer* buffer, int rest_id, int buffer_size, struct operation* op){
+    struct operation* it = buffer->buffer;
+    for (size_t i = 0; i < buffer_size; i++)
+    {
+        if (buffer->ptrs[i] == 1 && it->receiving_rest == rest_id) //id->receiving_rest or requested_rest????? WTF IS THE DIFERENCE??? TODO!!!!
+        {
+            *op = *it;
+            buffer->ptrs[i] = 0;
+        }
+        it++;
+    }
+}
 
 //void read_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op);
 
