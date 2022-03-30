@@ -9,11 +9,11 @@ void main_args(int argc, char* argv[], struct main_data* data) {
         exit(0);
     */
    //Putting args in struct "data"
-   data->max_ops = argv[1];
-   data->buffers_size = argv[2];
-   data->n_clients = argv[3];
-   data->n_drivers = argv[4];
-   data->n_restaurants = argv[5];
+   data->max_ops = atoi(argv[1]);
+   data->buffers_size = atoi(argv[2]);
+   data->n_clients = atoi(argv[3]);
+   data->n_drivers = atoi(argv[4]);
+   data->n_restaurants = atoi(argv[5]);
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
@@ -25,14 +25,14 @@ void create_dynamic_memory_buffers(struct main_data* data) {
     data->driver_stats = create_dynamic_memory(data->n_drivers);
     data->client_stats = create_dynamic_memory(data->n_clients);
 }
-
+/*
 void create_shared_memory_buffers(struct main_data* data, struct communication_buffers* buffers) {
     //provavelmente n é nada disto
     char mainRest = "mRestaurante";
     strcat(mainRest, getuid());
     buffers->main_rest = create_shared_memory(mainRest,)
 }
-
+*/
 //void launch_processes(struct communication_buffers* buffers, struct main_data* data)
 
 //void user_interaction(struct communication_buffers* buffers, struct main_data* data);
