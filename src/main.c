@@ -22,3 +22,16 @@ int main(int argc, char *argv[]) {
     destroy_dynamic_memory(buffers->driv_cli); 
     destroy_dynamic_memory(buffers); 
 } 
+
+void main_args(int argc, char* argv[], struct main_data* data) {
+    /* probably remove this or implement as feature
+    if (argc != 6)
+        TODO;
+    */
+   //Putting args in struct "data"
+   data->max_ops = argv[1];
+   data->buffers_size = argv[2];
+   data->n_clients = argv[3];
+   data->n_drivers = argv[4];
+   data->n_restaurants = argv[5];
+}
