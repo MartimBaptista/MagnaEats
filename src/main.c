@@ -1,4 +1,5 @@
 #include "main.h"
+#include <stdlib.h>
 
 int main(int argc, char *argv[]) { 
     //init data structures 
@@ -24,9 +25,11 @@ int main(int argc, char *argv[]) {
 } 
 
 void main_args(int argc, char* argv[], struct main_data* data) {
-    /* probably remove this or implement as feature
+    /* remove this or implement as feature
     if (argc != 6)
         TODO;
+        printf("Nao colocou o numero argumentos certo, tente novamente");
+        exit(0);
     */
    //Putting args in struct "data"
    data->max_ops = argv[1];
