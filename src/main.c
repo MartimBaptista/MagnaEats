@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void main_args(int argc, char* argv[], struct main_data* data) {
     /* remove this or implement as feature
@@ -25,17 +26,55 @@ void create_dynamic_memory_buffers(struct main_data* data) {
     data->driver_stats = create_dynamic_memory(data->n_drivers);
     data->client_stats = create_dynamic_memory(data->n_clients);
 }
-/*
+/* ------------------------------------------------------------------------------------------------
 void create_shared_memory_buffers(struct main_data* data, struct communication_buffers* buffers) {
     //provavelmente n é nada disto
     char mainRest = "mRestaurante";
     strcat(mainRest, getuid());
     buffers->main_rest = create_shared_memory(mainRest,)
-}
-*/
-//void launch_processes(struct communication_buffers* buffers, struct main_data* data)
+}  -------------------------------------------------------------------------------------------------
+*/ 
+// TODO
+// Onde obter ID?
+// como meter no pointer dos pids?
+//void launch_processes(struct communication_buffers* buffers, struct main_data* data) {
+//    data->restaurant_pids = launch_restaurant( /* RESTAURANT ID?*/, buffers, data);
+//    data->driver_pids = launch_restaurant( /* DRIVER ID?*/, buffers, data);
+//    data->client_pids = launch_restaurant( /* CLIENT ID?*/, buffers, data);
 
-//void user_interaction(struct communication_buffers* buffers, struct main_data* data);
+//} ------------------------------------------------------------------------------------------------
+
+void user_interaction(struct communication_buffers* buffers, struct main_data* data) {
+    char interaction[20];
+    int um, dois;
+    char prato[200];
+    printf("O que deseja? escreva help para obter informacoes \n");
+    scanf("%s %i %i %s", interaction, &um, &dois, prato);  // SHOULD BE OK IF THE LATTER ARE EMPTY
+    if (strcmp("request", interaction) == 0) {             // IF NOT FUCK ME :)
+//        create_request(/* int* op_counter */, buffers, data);
+    }
+    else if (strcmp("status", interaction) == 0) {
+        read_status(data);
+        user_interaction(buffers, data);
+    }
+    else if (strcmp("stop", interaction) == 0) {
+        stop_execution(data, buffers);
+    }
+    else if (strcmp("help", interaction) == 0) {
+        printf("Existem os seguintes comandos: \n");
+        printf("request - cria nova operacao, exemplo: request (id do cliente) (id do restaurante) (prato) \n");
+        printf ("status - verifica o estado de uma operação, exemplo: status (id da operacao) \n"); 
+        printf ("stop - termina a execucao do sistema MagnaEats \n");
+        printf ("help - o que acabou de pedir (: \n");
+        user_interaction(buffers, data);
+    }
+    else {
+        // mau input try again
+        printf("Input nao aceite, tente novamente \n");
+        user_interaction(buffers, data);
+    }
+
+}
 
 //void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data);
 
