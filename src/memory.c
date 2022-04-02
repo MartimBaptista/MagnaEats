@@ -1,5 +1,6 @@
-//#include "memory.h"
-#include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
+#include "memory.h"
+//#include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/mman.h>
@@ -95,7 +96,7 @@ void read_main_rest_buffer(struct rnd_access_buffer* buffer, int rest_id, int bu
     op->id = -1;
     for (size_t i = 0; i < buffer_size; i++)
     {
-        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->receiving_rest == rest_id) //id->receiving_rest or requested_rest????? WTF IS THE DIFERENCE??? TODO!!!!
+        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->requested_rest == rest_id)
         {
             *op = buffer->buffer[i];
             buffer->ptrs[i] = 0;
@@ -115,7 +116,7 @@ void read_driver_client_buffer(struct rnd_access_buffer* buffer, int client_id, 
     op->id = -1;
     for (size_t i = 0; i < buffer_size; i++)
     {
-        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->receiving_client == client_id) //id->receiving_client or requested_client????? WTF IS THE DIFERENCE??? TODO!!!!
+        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->requested_rest == client_id)
         {
             *op = buffer->buffer[i];
             buffer->ptrs[i] = 0;
