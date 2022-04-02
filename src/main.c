@@ -1,5 +1,10 @@
 #include "main.h"
 
+#include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
+#include "/home/martin/Documents/MagnaEats/MagnaEats/include/main.h"
+#include "/home/martin/Documents/MagnaEats/MagnaEats/include/process.h"
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -20,30 +25,41 @@ void main_args(int argc, char* argv[], struct main_data* data) {
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
-    data->restaurant_pids = create_dynamic_memory(data->n_restaurants);
-    data->driver_pids = create_dynamic_memory(data->n_drivers);
-    data->client_pids = create_dynamic_memory(data->n_clients);
+    data->restaurant_pids = create_dynamic_memory(data->n_restaurants * sizeof(int));
+    data->driver_pids = create_dynamic_memory(data->n_drivers * sizeof(int));
+    data->client_pids = create_dynamic_memory(data->n_clients * sizeof(int));
 
-    data->restaurant_stats = create_dynamic_memory(data->n_restaurants);
-    data->driver_stats = create_dynamic_memory(data->n_drivers);
-    data->client_stats = create_dynamic_memory(data->n_clients);
-}
+    data->restaurant_stats = create_dynamic_memory(data->n_restaurants * sizeof(int));
+    data->driver_stats = create_dynamic_memory(data->n_drivers * sizeof(int));
+    data->client_stats = create_dynamic_memory(data->n_clients * sizeof(int));
+}   
 
 void create_shared_memory_buffers(struct main_data* data, struct communication_buffers* buffers){
-    return;
+    size_t op_buffer_size = data->buffers_size * sizeof(struct operation);
+    //MAIN -> REST
+    buffers->main_rest->ptrs = create_shared_memory(STR_SHM_MAIN_REST_PTR, data->buffers_size * sizeof(int));
+    buffers->main_rest->buffer = create_shared_memory(STR_SHM_MAIN_REST_BUFFER, op_buffer_size);
+    //REST -> DRIV
+    buffers->rest_driv->ptrs = create_shared_memory(STR_SHM_REST_DRIVER_PTR, sizeof(struct pointers));
+    buffers->rest_driv->buffer = create_shared_memory(STR_SHM_REST_DRIVER_BUFFER, op_buffer_size);
+    //DRIV -> CLI
+    buffers->driv_cli->ptrs = create_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, data->buffers_size * sizeof(int));
+    buffers->driv_cli->buffer = create_shared_memory(STR_SHM_DRIVER_CLIENT_BUFFER, op_buffer_size);
+    //results and terminate
+    data->results = create_shared_memory(STR_SHM_RESULTS, data->max_ops * sizeof(struct operation));
+    data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
 }
-// TODO
-// Onde obter ID?
-// como meter no pointer dos pids?
-//void launch_processes(struct communication_buffers* buffers, struct main_data* data) {
-//    data->restaurant_pids = launch_restaurant( /* RESTAURANT ID?*/, buffers, data);
-//    data->driver_pids = launch_restaurant( /* DRIVER ID?*/, buffers, data);
-//    data->client_pids = launch_restaurant( /* CLIENT ID?*/, buffers, data);
-
-//} ------------------------------------------------------------------------------------------------
 
 void launch_processes(struct communication_buffers* buffers, struct main_data* data){
-    return;
+    for (size_t i = 0; i < data->n_restaurants; i++){
+        data->restaurant_pids[i] = launch_restaurant(i, buffers, data);
+    }
+    for (size_t i = 0; i < data->n_drivers; i++){
+        data->client_pids[i] = launch_client(i, buffers, data);
+    }
+    for (size_t i = 0; i < data->n_clients; i++){
+        data->driver_pids[i] = launch_driver(i, buffers, data);
+    }
 }
 
 void user_interaction(struct communication_buffers* buffers, struct main_data* data){
@@ -81,7 +97,11 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
 */
 
 void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data){
-    return;
+    if(*op_counter < data->max_ops){
+        struct operation *new_operation;
+        new_operation->id = *op_counter;
+        //TODO
+    }
 }
 
 void read_status(struct main_data* data){

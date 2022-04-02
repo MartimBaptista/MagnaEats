@@ -1,5 +1,4 @@
 #include "memory.h"
-//#include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
 
 #include <stdlib.h>
 #include <stdio.h>
