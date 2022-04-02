@@ -100,7 +100,31 @@ void write_statistics(struct main_data* data){
     return;
 }
 
-void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers);
+void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers){
+    //Dynamica memory destruction
+        destroy_dynamic_memory(data->restaurant_pids);
+        destroy_dynamic_memory(data->driver_pids);
+        destroy_dynamic_memory(data->client_pids);
+
+        destroy_dynamic_memory(data->restaurant_stats);
+        destroy_dynamic_memory(data->driver_stats);
+        destroy_dynamic_memory(data->client_stats);
+
+    //Shared memory destruction
+        destroy_shared_memory(STR_SHM_MAIN_REST_BUFFER, buffers->main_rest->buffer, data->buffers_size * sizeof(buffers->main_rest->buffer));
+        destroy_shared_memory(STR_SHM_MAIN_REST_PTR, buffers->main_rest->ptrs, data->buffers_size * sizeof(buffers->main_rest->ptrs));
+        
+        destroy_shared_memory(STR_SHM_REST_DRIVER_BUFFER, buffers->rest_driv->buffer, data->buffers_size * sizeof(buffers->rest_driv->buffer));
+        destroy_shared_memory(STR_SHM_REST_DRIVER_PTR, buffers->rest_driv->ptrs, data->buffers_size * sizeof(buffers->rest_driv->ptrs));
+        
+        destroy_shared_memory(STR_SHM_DRIVER_CLIENT_BUFFER, buffers->driv_cli->buffer, data->buffers_size * sizeof(buffers->driv_cli->buffer));
+        destroy_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, buffers->driv_cli->ptrs, data->buffers_size * sizeof(buffers->driv_cli->ptrs));
+        
+        destroy_shared_memory(STR_SHM_RESULTS, data->results, data->buffers_size * sizeof(data->results));
+        
+        destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, data->buffers_size * sizeof(data->terminate));
+
+}
 
 int main(int argc, char *argv[]) { 
     //init data structures 
