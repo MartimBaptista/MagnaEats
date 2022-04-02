@@ -18,15 +18,13 @@ void* create_shared_memory(char* name, int size){
     }
 
     ret = ftruncate(fd, size);
-    if (ret == -1)
-    {
+    if (ret == -1){
         perror("Failed to assign size to shared memory");
         exit(1);
     }
 
     ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    if (ptr == MAP_FAILED)
-    {
+    if (ptr == MAP_FAILED){
         perror("Failed to map shared memory");
         exit(1);
     }
@@ -60,10 +58,8 @@ void destroy_dynamic_memory(void* ptr){
 }
 
 void write_main_rest_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
-    for (size_t i = 0; i < buffer_size; i++)
-    {
-        if (buffer->ptrs[i] == 0)
-        {
+    for (size_t i = 0; i < buffer_size; i++){
+        if (buffer->ptrs[i] == 0){
             buffer->buffer[i] = *op;
             buffer->ptrs[i] = 1;
             break;
@@ -72,19 +68,15 @@ void write_main_rest_buffer(struct rnd_access_buffer* buffer, int buffer_size, s
 }
 
 void write_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
-    if ((buffer->ptrs->in + 1) % buffer_size != buffer->ptrs->out)
-    {
+    if ((buffer->ptrs->in + 1) % buffer_size != buffer->ptrs->out){
         buffer->buffer[buffer->ptrs->in] = *op;
         buffer->ptrs->in = (buffer->ptrs->in + 1) % buffer_size;
     }
-    
 }
 
 void write_driver_client_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
-    for (size_t i = 0; i < buffer_size; i++)
-    {
-        if (buffer->ptrs[i] == 0)
-        {
+    for (size_t i = 0; i < buffer_size; i++){
+        if (buffer->ptrs[i] == 0){
             buffer->buffer[i] = *op;
             buffer->ptrs[i] = 1;
             break;
@@ -94,10 +86,8 @@ void write_driver_client_buffer(struct rnd_access_buffer* buffer, int buffer_siz
 
 void read_main_rest_buffer(struct rnd_access_buffer* buffer, int rest_id, int buffer_size, struct operation* op){
     op->id = -1;
-    for (size_t i = 0; i < buffer_size; i++)
-    {
-        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->requested_rest == rest_id)
-        {
+    for (size_t i = 0; i < buffer_size; i++){
+        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->requested_rest == rest_id){
             *op = buffer->buffer[i];
             buffer->ptrs[i] = 0;
             break;
@@ -114,10 +104,8 @@ void read_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, st
 
 void read_driver_client_buffer(struct rnd_access_buffer* buffer, int client_id, int buffer_size, struct operation* op){
     op->id = -1;
-    for (size_t i = 0; i < buffer_size; i++)
-    {
-        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->requested_rest == client_id)
-        {
+    for (size_t i = 0; i < buffer_size; i++){
+        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->requested_rest == client_id){
             *op = buffer->buffer[i];
             buffer->ptrs[i] = 0;
             break;
