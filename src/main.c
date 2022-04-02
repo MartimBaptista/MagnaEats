@@ -1,6 +1,8 @@
 #include "main.h"
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 void main_args(int argc, char* argv[], struct main_data* data) {
     /* remove this or implement as feature
@@ -26,14 +28,10 @@ void create_dynamic_memory_buffers(struct main_data* data) {
     data->driver_stats = create_dynamic_memory(data->n_drivers);
     data->client_stats = create_dynamic_memory(data->n_clients);
 }
-/* ------------------------------------------------------------------------------------------------
-void create_shared_memory_buffers(struct main_data* data, struct communication_buffers* buffers) {
-    //provavelmente n é nada disto
-    char mainRest = "mRestaurante";
-    strcat(mainRest, getuid());
-    buffers->main_rest = create_shared_memory(mainRest,)
-}  -------------------------------------------------------------------------------------------------
-*/ 
+
+void create_shared_memory_buffers(struct main_data* data, struct communication_buffers* buffers){
+    return;
+}
 // TODO
 // Onde obter ID?
 // como meter no pointer dos pids?
@@ -44,14 +42,21 @@ void create_shared_memory_buffers(struct main_data* data, struct communication_b
 
 //} ------------------------------------------------------------------------------------------------
 
-void user_interaction(struct communication_buffers* buffers, struct main_data* data) {
+void launch_processes(struct communication_buffers* buffers, struct main_data* data){
+    return;
+}
+
+void user_interaction(struct communication_buffers* buffers, struct main_data* data){
+    return;
+}
+    /*
     char interaction[20];
     int um, dois;
     char prato[200];
     printf("O que deseja? escreva help para obter informacoes \n");
     scanf("%s %i %i %s", interaction, &um, &dois, prato);  // SHOULD BE OK IF THE LATTER ARE EMPTY
-    if (strcmp("request", interaction) == 0) {             // IF NOT FUCK ME :)
-//        create_request(/* int* op_counter */, buffers, data);
+    if (strcmp("request", interaction) == 0) {
+        create_request( int* op_counter , buffers, data);
     }
     else if (strcmp("status", interaction) == 0) {
         read_status(data);
@@ -73,20 +78,29 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
         printf("Input nao aceite, tente novamente \n");
         user_interaction(buffers, data);
     }
+*/
 
+void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data){
+    return;
 }
 
-//void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data);
+void read_status(struct main_data* data){
+    return;
+}
 
-//void read_status(struct main_data* data);
+void stop_execution(struct main_data* data, struct communication_buffers* buffers){
+    return;
+}
 
-//void stop_execution(struct main_data* data, struct communication_buffers* buffers);
+void wait_processes(struct main_data* data){
+    return;
+}
 
-//void wait_processes(struct main_data* data);
+void write_statistics(struct main_data* data){
+    return;
+}
 
-//void write_statistics(struct main_data* data);
-
-//void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers);
+void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers);
 
 int main(int argc, char *argv[]) { 
     //init data structures 
