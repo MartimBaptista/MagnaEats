@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/mman.h>
 
 int execute_restaurant(int rest_id, struct communication_buffers* buffers, struct main_data* data){
     int* counter = data->restaurant_stats;
