@@ -1,4 +1,4 @@
-#include "main.h"
+#include "driver.h"
 int execute_driver(int driver_id, struct communication_buffers* buffers, struct main_data* data) {
     int* counter = data->driver_stats;
     while (data->terminate == 0) {
