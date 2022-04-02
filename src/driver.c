@@ -1,4 +1,5 @@
 #include "driver.h"
+
 int execute_driver(int driver_id, struct communication_buffers* buffers, struct main_data* data) {
     int* counter = data->driver_stats;
     while (data->terminate == 0) {
@@ -13,12 +14,10 @@ int execute_driver(int driver_id, struct communication_buffers* buffers, struct 
 }
 
 void driver_receive_operation(struct operation* op, struct communication_buffers* buffers, struct main_data* data) {
-    if (data->terminate == 1){
+    if (data->terminate == 1)
         return;
-    }
-    else {
+    else
         read_rest_driver_buffer(buffers->rest_driv, data->buffers_size, op);
-    }
 }
 
 void driver_process_operation(struct operation* op, int driver_id, struct main_data* data, int* counter) {
