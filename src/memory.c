@@ -59,35 +59,67 @@ void destroy_dynamic_memory(void* ptr){
 }
 
 void write_main_rest_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
-    struct operation* it = buffer->buffer;
     for (size_t i = 0; i < buffer_size; i++)
     {
         if (buffer->ptrs[i] == 0)
         {
-            it = op;
+            buffer->buffer[i] = *op;
             buffer->ptrs[i] = 1;
+            break;
         }
-        it++;
     }
 }
 
-//void write_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op);
+void write_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
+    if ((buffer->ptrs->in + 1) % buffer_size != buffer->ptrs->out)
+    {
+        buffer->buffer[buffer->ptrs->in] = *op;
+        buffer->ptrs->in = (buffer->ptrs->in + 1) % buffer_size;
+    }
+    
+}
 
-//void write_driver_client_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op);
-
-void read_main_rest_buffer(struct rnd_access_buffer* buffer, int rest_id, int buffer_size, struct operation* op){
-    struct operation* it = buffer->buffer;
+void write_driver_client_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
     for (size_t i = 0; i < buffer_size; i++)
     {
-        if (buffer->ptrs[i] == 1 && it->receiving_rest == rest_id) //id->receiving_rest or requested_rest????? WTF IS THE DIFERENCE??? TODO!!!!
+        if (buffer->ptrs[i] == 0)
         {
-            *op = *it;
-            buffer->ptrs[i] = 0;
+            buffer->buffer[i] = *op;
+            buffer->ptrs[i] = 1;
+            break;
         }
-        it++;
     }
 }
 
-//void read_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op);
+void read_main_rest_buffer(struct rnd_access_buffer* buffer, int rest_id, int buffer_size, struct operation* op){
+    op->id = -1;
+    for (size_t i = 0; i < buffer_size; i++)
+    {
+        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->receiving_rest == rest_id) //id->receiving_rest or requested_rest????? WTF IS THE DIFERENCE??? TODO!!!!
+        {
+            *op = buffer->buffer[i];
+            buffer->ptrs[i] = 0;
+            break;
+        }
+    }
+}
 
-//void read_driver_client_buffer(struct rnd_access_buffer* buffer, int client_id, int buffer_size, struct operation* op);
+void read_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
+    if(buffer->ptrs->in != buffer->ptrs->out){
+        *op = buffer->buffer[buffer->ptrs->out];
+        buffer->ptrs->out = (buffer->ptrs->out + 1) % buffer_size;
+    }
+}
+
+void read_driver_client_buffer(struct rnd_access_buffer* buffer, int client_id, int buffer_size, struct operation* op){
+    op->id = -1;
+    for (size_t i = 0; i < buffer_size; i++)
+    {
+        if (buffer->ptrs[i] == 1 && (buffer->buffer + 1)->receiving_client == client_id) //id->receiving_client or requested_client????? WTF IS THE DIFERENCE??? TODO!!!!
+        {
+            *op = buffer->buffer[i];
+            buffer->ptrs[i] = 0;
+            break;
+        }
+    }
+}
