@@ -63,45 +63,46 @@ void launch_processes(struct communication_buffers* buffers, struct main_data* d
 }
 
 void user_interaction(struct communication_buffers* buffers, struct main_data* data){
-    return;
-}
-    /*
     char interaction[20];
-    int um, dois;
-    char prato[200];
-    printf("O que deseja? escreva help para obter informacoes \n");
-    scanf("%s %i %i %s", interaction, &um, &dois, prato);  // SHOULD BE OK IF THE LATTER ARE EMPTY
-    if (strcmp("request", interaction) == 0) {
-        create_request( int* op_counter , buffers, data);
+    int counter;
+    while (data->terminate != 0){
+        printf("O que deseja? escreva help para obter informacoes \n");
+        scanf("%s", interaction);
+        if (strcmp("request", interaction) == 0) {
+            create_request(&counter , buffers, data);
+        }
+        else if (strcmp("status", interaction) == 0) {
+            read_status(data);
+            user_interaction(buffers, data);
+        }
+        else if (strcmp("stop", interaction) == 0) {
+            stop_execution(data, buffers);
+        }
+        else if (strcmp("help", interaction) == 0) {
+            printf("Existem os seguintes comandos: \n");
+            printf("request - cria nova operacao, exemplo: request (id do cliente) (id do restaurante) (prato) \n");
+            printf("status - verifica o estado de uma operação, exemplo: status (id da operacao) \n"); 
+            printf("stop - termina a execucao do sistema MagnaEats \n");
+            printf("help - o que acabou de pedir (: \n");
+            user_interaction(buffers, data);
+        }
+        else {
+            // mau input try again
+            printf("Input nao aceite, tente novamente \n");
+            user_interaction(buffers, data);
+        }
     }
-    else if (strcmp("status", interaction) == 0) {
-        read_status(data);
-        user_interaction(buffers, data);
-    }
-    else if (strcmp("stop", interaction) == 0) {
-        stop_execution(data, buffers);
-    }
-    else if (strcmp("help", interaction) == 0) {
-        printf("Existem os seguintes comandos: \n");
-        printf("request - cria nova operacao, exemplo: request (id do cliente) (id do restaurante) (prato) \n");
-        printf ("status - verifica o estado de uma operação, exemplo: status (id da operacao) \n"); 
-        printf ("stop - termina a execucao do sistema MagnaEats \n");
-        printf ("help - o que acabou de pedir (: \n");
-        user_interaction(buffers, data);
-    }
-    else {
-        // mau input try again
-        printf("Input nao aceite, tente novamente \n");
-        user_interaction(buffers, data);
-    }
-*/
+}
 
 void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data){
     if(*op_counter < data->max_ops){
-        struct operation *new_operation;
-        new_operation->id = *op_counter;
-        //TODO
+        struct operation new_operation;
+        new_operation.id = *op_counter;
+        scanf("");
+        //TODO increase counter        
     }
+    else
+        printf("Max operation reached!!!");
 }
 
 void read_status(struct main_data* data){
@@ -131,19 +132,18 @@ void destroy_memory_buffers(struct main_data* data, struct communication_buffers
         destroy_dynamic_memory(data->client_stats);
 
     //Shared memory destruction
+        //MAIN -> REST
         destroy_shared_memory(STR_SHM_MAIN_REST_BUFFER, buffers->main_rest->buffer, data->buffers_size * sizeof(buffers->main_rest->buffer));
         destroy_shared_memory(STR_SHM_MAIN_REST_PTR, buffers->main_rest->ptrs, data->buffers_size * sizeof(buffers->main_rest->ptrs));
-        
+        //REST -> DRIV
         destroy_shared_memory(STR_SHM_REST_DRIVER_BUFFER, buffers->rest_driv->buffer, data->buffers_size * sizeof(buffers->rest_driv->buffer));
         destroy_shared_memory(STR_SHM_REST_DRIVER_PTR, buffers->rest_driv->ptrs, data->buffers_size * sizeof(buffers->rest_driv->ptrs));
-        
+        //DRIV -> CLI
         destroy_shared_memory(STR_SHM_DRIVER_CLIENT_BUFFER, buffers->driv_cli->buffer, data->buffers_size * sizeof(buffers->driv_cli->buffer));
         destroy_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, buffers->driv_cli->ptrs, data->buffers_size * sizeof(buffers->driv_cli->ptrs));
-        
+        //results and terminate
         destroy_shared_memory(STR_SHM_RESULTS, data->results, data->buffers_size * sizeof(data->results));
-        
         destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, data->buffers_size * sizeof(data->terminate));
-
 }
 
 int main(int argc, char *argv[]) { 
