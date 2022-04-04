@@ -1,8 +1,9 @@
 #include "main.h"
+#include "process.h"
 
-#include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
-#include "/home/martin/Documents/MagnaEats/MagnaEats/include/main.h"
-#include "/home/martin/Documents/MagnaEats/MagnaEats/include/process.h"
+// #include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
+// #include "/home/martin/Documents/MagnaEats/MagnaEats/include/main.h"
+// #include "/home/martin/Documents/MagnaEats/MagnaEats/include/process.h"
 
 
 #include <stdlib.h>
@@ -118,7 +119,15 @@ void wait_processes(struct main_data* data){
 }
 
 void write_statistics(struct main_data* data){
-    return;
+    for (size_t i = 0; i < data->n_restaurants; i++){
+        printf("Operações processadas pelo Restaurante %d: %d", data->restaurant_pids[i], data->restaurant_stats[i]);
+    }
+    for (size_t i = 0; i < data->n_drivers; i++){
+        printf("Operações processadas pelo Condutor %d: %d", data->driver_pids[i], data->driver_stats[i]);
+    }
+    for (size_t i = 0; i < data->n_clients; i++){
+        printf("Operações processadas pelo Cliente %d: %d", data->client_pids[i], data->client_stats[i]);
+    }
 }
 
 void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers){
