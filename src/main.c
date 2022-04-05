@@ -94,7 +94,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
             printf("help - Imprime informação sobre as ações disponíveis.\n");
         }
         else {
-            printf("Input não aceite, tente novamente.\n");
+            printf("Ação não reconhecida, insira 'help' para assistência.\n");
         }
     }
 }
@@ -119,6 +119,9 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
 }
 
 void read_status(struct main_data* data){
+    //Pedido 0 com estado I requisitado pelo cliente 1 ao restaurante 1 com o prato pato, ainda não foi recebido no restaurante!
+    //R??? IDK
+    //Pedido 0 com estado D requisitado pelo cliente 1 ao restaurante 0 com o prato pato, foi tratado pelo restaurante 0, encaminhado pelo motorista 0, mas ainda não foi recebido no cliente!
     return;
 }
 

@@ -1,16 +1,16 @@
 #include "driver.h"
 
 int execute_driver(int driver_id, struct communication_buffers* buffers, struct main_data* data) {
-    int* counter = data->driver_stats;
+    int counter;
     while (data->terminate == 0) {
         struct operation op;
         driver_receive_operation(&op, buffers, data);
         if(op.id != -1){
-            driver_process_operation(&op, driver_id, data, counter);
+            driver_process_operation(&op, driver_id, data, &counter);
             driver_send_answer(&op, buffers, data);
         }
     }
-    return *counter;
+    return counter;
 }
 
 void driver_receive_operation(struct operation* op, struct communication_buffers* buffers, struct main_data* data) {
