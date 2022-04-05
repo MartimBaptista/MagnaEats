@@ -110,7 +110,8 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         new_operation.requesting_client = client;
         new_operation.requested_rest = rest;
         new_operation.requested_dish = dish;
-        new_operation.status = 'I';                                                                      //TODO IS IT I???????
+        new_operation.status = 'I';
+        data->results[new_operation.id] = new_operation;
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
         *op_counter++;
     }
@@ -119,14 +120,36 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
 }
 
 void read_status(struct main_data* data){
-    //Pedido 0 com estado I requisitado pelo cliente 1 ao restaurante 1 com o prato pato, ainda não foi recebido no restaurante!
-    //R??? IDK
-    //Pedido 0 com estado D requisitado pelo cliente 1 ao restaurante 0 com o prato pato, foi tratado pelo restaurante 0, encaminhado pelo motorista 0, mas ainda não foi recebido no cliente!
-    return;
+    int id;
+    struct operation* op;
+    scanf("%d", &id);
+    for (size_t i = 0; i < data->max_ops; i++){
+        if((*op = data->results[i]).id == id){
+            printf("Pedido %d com o estado %c requesitado pelo cliente %d ao restaurante %d com o prato %s, ", op->id, op->status, op->requesting_client, op->requested_rest, op->requested_dish);
+            if('I' == op->status)
+                printf("aidna não foi recebido no restaurante!\n");
+            else{
+                printf("foi tratado pelo restaurante %d, ", op->receiving_rest);
+                if('R' == op->status)
+                    printf("aidna não foi recebido pelo motorista!\n");
+                else{
+                    printf("foi ecaminhado pelo motorista %d, ", op->receiving_driver);
+                    if('D' == op->status)
+                        printf("aidna não foi recebido pelo cliente!\n");
+                    else{
+                        printf("foi recebido pelo cliente %d.\n", op->receiving_client);
+                    }
+                }
+            }
+        }
+    }
 }
 
 void stop_execution(struct main_data* data, struct communication_buffers* buffers){
-    return;
+    *data->terminate = 1;
+    wait_processes(data);
+    write_statistics(data);
+    destroy_memory_buffers(data, buffers);
 }
 
 void wait_processes(struct main_data* data){
