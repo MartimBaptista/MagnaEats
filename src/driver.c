@@ -24,7 +24,7 @@ void driver_process_operation(struct operation* op, int driver_id, struct main_d
     op->receiving_driver = driver_id;
     op->status = 'D';
     *counter++;
-    data->results = op;
+    data->results[op->id] = *op;
 }
 
 void driver_send_answer(struct operation* op, struct communication_buffers* buffers, struct main_data* data) {

@@ -27,7 +27,7 @@ void restaurant_process_operation(struct operation* op, int rest_id, struct main
     op->receiving_rest = rest_id;
     op->status = 'R';
     *counter++;
-    data->results = op;
+    data->results[op->id] = *op;
 }
 
 void restaurant_forward_operation(struct operation* op, struct communication_buffers* buffers, struct main_data* data){
