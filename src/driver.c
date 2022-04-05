@@ -3,11 +3,11 @@
 int execute_driver(int driver_id, struct communication_buffers* buffers, struct main_data* data) {
     int* counter = data->driver_stats;
     while (data->terminate == 0) {
-        struct operation *op;
-        driver_receive_operation(op, buffers, data);
-        if(op->id != -1){
-            driver_process_operation(op, driver_id, data, counter);
-            driver_send_answer(op, buffers, data);
+        struct operation op;
+        driver_receive_operation(&op, buffers, data);
+        if(op.id != -1){
+            driver_process_operation(&op, driver_id, data, counter);
+            driver_send_answer(&op, buffers, data);
         }
     }
     return *counter;

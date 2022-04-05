@@ -6,11 +6,11 @@
 int execute_restaurant(int rest_id, struct communication_buffers* buffers, struct main_data* data){
     int* counter = data->restaurant_stats;
     while (data->terminate == 0){
-        struct operation *op;
-        restaurant_receive_operation(op, rest_id, buffers, data);
-        if(op->id != -1){
-            restaurant_process_operation(op, rest_id, data, counter);
-            restaurant_forward_operation(op, buffers, data);
+        struct operation op;
+        restaurant_receive_operation(&op, rest_id, buffers, data);
+        if(op.id != -1){
+            restaurant_process_operation(&op, rest_id, data, counter);
+            restaurant_forward_operation(&op, buffers, data);
         }
     }
     return *counter;
