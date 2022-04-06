@@ -51,17 +51,21 @@ void create_shared_memory_buffers(struct main_data* data, struct communication_b
     //results and terminate
     data->results = create_shared_memory(STR_SHM_RESULTS, data->max_ops * sizeof(struct operation));
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
+    *data->terminate = 0;
 }
 
 void launch_processes(struct communication_buffers* buffers, struct main_data* data){
     for (size_t i = 0; i < data->n_restaurants; i++){
         data->restaurant_pids[i] = launch_restaurant(i, buffers, data);
+        printf("Rest Launched pid: %d \n", data->restaurant_pids[i]);
     }
     for (size_t i = 0; i < data->n_drivers; i++){
-        data->client_pids[i] = launch_client(i, buffers, data);
+        data->driver_pids[i] = launch_driver(i, buffers, data);
+        printf("Driver Launched pid: %d \n", data->driver_pids[i]);
     }
     for (size_t i = 0; i < data->n_clients; i++){
-        data->driver_pids[i] = launch_driver(i, buffers, data);
+        data->client_pids[i] = launch_client(i, buffers, data);
+        printf("Client Launched pid: %d \n", data->client_pids[i]);
     }
 }
 
@@ -114,6 +118,7 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         data->results[new_operation.id] = new_operation;
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
         *op_counter++;
+        printf("O pedido #%d foi criado!\n", new_operation.id);
     }
     else
         printf("Numero maximo de operações alcançado!!!");
@@ -163,13 +168,13 @@ void wait_processes(struct main_data* data){
 
 void write_statistics(struct main_data* data){
     for (size_t i = 0; i < data->n_restaurants; i++){
-        printf("Operações processadas pelo Restaurante %d: %d\n", data->restaurant_pids[i], data->restaurant_stats[i]);
+        printf("Operações processadas pelo Restaurante %zu: %d\n", i, data->restaurant_stats[i]);
     }
     for (size_t i = 0; i < data->n_drivers; i++){
-        printf("Operações processadas pelo Condutor %d: %d\n", data->driver_pids[i], data->driver_stats[i]);
+        printf("Operações processadas pelo Condutor %zu: %d\n", i, data->driver_stats[i]);
     }
     for (size_t i = 0; i < data->n_clients; i++){
-        printf("Operações processadas pelo Cliente %d: %d\n", data->client_pids[i], data->client_stats[i]);
+        printf("Operações processadas pelo Cliente %zu: %d\n", i, data->client_stats[i]);
     }
 }
 

@@ -1,11 +1,15 @@
 #include "driver.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+
 int execute_driver(int driver_id, struct communication_buffers* buffers, struct main_data* data) {
-    int counter;
+    int counter = 0;
     while (*data->terminate == 0) {
         struct operation op;
         driver_receive_operation(&op, buffers, data);
         if(op.id != -1){
+            printf("Motorista recebeu pedido!\n");
             driver_process_operation(&op, driver_id, data, &counter);
             driver_send_answer(&op, buffers, data);
         }
@@ -23,7 +27,7 @@ void driver_receive_operation(struct operation* op, struct communication_buffers
 void driver_process_operation(struct operation* op, int driver_id, struct main_data* data, int* counter) {
     op->receiving_driver = driver_id;
     op->status = 'D';
-    *counter++;
+    (*counter)++;
     data->results[op->id] = *op;
 }
 
