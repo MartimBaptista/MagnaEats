@@ -74,7 +74,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     printf("stop - Termina a execução do magnaeats.\n");
     printf("help - Imprime informação sobre as ações disponíveis.\n");
 
-    while (data->terminate != 0){
+    while (*data->terminate == 0){
         printf("Introduzir ação:\n");
         scanf("%s", interaction);
         if (strcmp("request", interaction) == 0) {
@@ -153,18 +153,23 @@ void stop_execution(struct main_data* data, struct communication_buffers* buffer
 }
 
 void wait_processes(struct main_data* data){
-    return;
+    for (size_t i = 0; i < data->n_restaurants; i++)
+        *data->restaurant_stats = wait_process(data->restaurant_pids[i]);
+    for (size_t i = 0; i < data->n_drivers; i++)
+        *data->driver_stats = wait_process(data->driver_pids[i]);
+    for (size_t i = 0; i < data->n_clients; i++)
+        *data->client_stats = wait_process(data->client_pids[i]);
 }
 
 void write_statistics(struct main_data* data){
     for (size_t i = 0; i < data->n_restaurants; i++){
-        printf("Operações processadas pelo Restaurante %d: %d", data->restaurant_pids[i], data->restaurant_stats[i]);
+        printf("Operações processadas pelo Restaurante %d: %d\n", data->restaurant_pids[i], data->restaurant_stats[i]);
     }
     for (size_t i = 0; i < data->n_drivers; i++){
-        printf("Operações processadas pelo Condutor %d: %d", data->driver_pids[i], data->driver_stats[i]);
+        printf("Operações processadas pelo Condutor %d: %d\n", data->driver_pids[i], data->driver_stats[i]);
     }
     for (size_t i = 0; i < data->n_clients; i++){
-        printf("Operações processadas pelo Cliente %d: %d", data->client_pids[i], data->client_stats[i]);
+        printf("Operações processadas pelo Cliente %d: %d\n", data->client_pids[i], data->client_stats[i]);
     }
 }
 

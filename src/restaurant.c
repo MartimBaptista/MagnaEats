@@ -5,7 +5,7 @@
 
 int execute_restaurant(int rest_id, struct communication_buffers* buffers, struct main_data* data){
     int counter;
-    while (data->terminate == 0){
+    while (*data->terminate == 0){
         struct operation op;
         restaurant_receive_operation(&op, rest_id, buffers, data);
         if(op.id != -1){

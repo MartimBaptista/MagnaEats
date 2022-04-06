@@ -5,7 +5,7 @@
 
 int execute_client(int client_id, struct communication_buffers* buffers, struct main_data* data){
     int counter;
-    while (data->terminate == 0){
+    while (*data->terminate == 0){
         struct operation op;
         client_get_operation(&op, client_id, buffers, data);
         if(op.id != -1)
@@ -15,7 +15,7 @@ int execute_client(int client_id, struct communication_buffers* buffers, struct 
 }
 
 void client_get_operation(struct operation* op, int client_id, struct communication_buffers* buffers, struct main_data* data){
-    if(*(data->terminate) == 1)
+    if(*data->terminate == 1)
         return;
     else
         read_driver_client_buffer(buffers->driv_cli, client_id, data->buffers_size, op);
