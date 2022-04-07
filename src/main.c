@@ -5,9 +5,9 @@
 #include "driver.h"
 #include "client.h"
 
- #include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
- #include "/home/martin/Documents/MagnaEats/MagnaEats/include/main.h"
- #include "/home/martin/Documents/MagnaEats/MagnaEats/include/process.h"
+//  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
+//  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/main.h"
+//  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/process.h"
 
 
 #include <stdlib.h>
@@ -43,7 +43,7 @@ void create_shared_memory_buffers(struct main_data* data, struct communication_b
     buffers->main_rest->ptrs = create_shared_memory(STR_SHM_MAIN_REST_PTR, data->buffers_size * sizeof(int));
     buffers->main_rest->buffer = create_shared_memory(STR_SHM_MAIN_REST_BUFFER, op_buffer_size);
     //REST -> DRIV
-    buffers->rest_driv->ptrs = create_shared_memory(STR_SHM_REST_DRIVER_PTR, sizeof(struct pointers));
+    buffers->rest_driv->ptrs = create_shared_memory(STR_SHM_REST_DRIVER_PTR, data->buffers_size * sizeof(struct pointers));
     buffers->rest_driv->buffer = create_shared_memory(STR_SHM_REST_DRIVER_BUFFER, op_buffer_size);
     //DRIV -> CLI
     buffers->driv_cli->ptrs = create_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, data->buffers_size * sizeof(int));
@@ -58,6 +58,7 @@ void launch_processes(struct communication_buffers* buffers, struct main_data* d
     for (size_t i = 0; i < data->n_restaurants; i++){
         data->restaurant_pids[i] = launch_restaurant(i, buffers, data);
         printf("Rest Launched pid: %d \n", data->restaurant_pids[i]);
+        printf("valor i %zu\n", i);
     }
     for (size_t i = 0; i < data->n_drivers; i++){
         data->driver_pids[i] = launch_driver(i, buffers, data);
@@ -82,7 +83,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
         printf("Introduzir ação:\n");
         scanf("%s", interaction);
         if (strcmp("request", interaction) == 0) {
-            create_request(&counter , buffers, data);
+            create_request(&counter, buffers, data);
         }
         else if (strcmp("status", interaction) == 0) {
             read_status(data);
@@ -117,7 +118,7 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         new_operation.status = 'I';
         data->results[new_operation.id] = new_operation;
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
-        *op_counter++;
+        (*op_counter)++;
         printf("O pedido #%d foi criado!\n", new_operation.id);
     }
     else
@@ -126,23 +127,29 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
 
 void read_status(struct main_data* data){
     int id;
-    struct operation* op;
+    struct operation op;
+    // for (size_t i = 0; i < data->max_ops; i++)
+    // {
+    //     printf("%d %d %d %d\n", data->results[i].requesting_client, data->results[i].requested_rest, data->results[i].receiving_client\
+    //     , data->results[i].receiving_rest);
+    // }
+    //printf("\n%d %d %d %d %c\n", op.id, op.receiving_client, op.receiving_driver, op.receiving_rest, op.status );
     scanf("%d", &id);
     for (size_t i = 0; i < data->max_ops; i++){
-        if((*op = data->results[i]).id == id){
-            printf("Pedido %d com o estado %c requesitado pelo cliente %d ao restaurante %d com o prato %s, ", op->id, op->status, op->requesting_client, op->requested_rest, op->requested_dish);
-            if('I' == op->status)
-                printf("aidna não foi recebido no restaurante!\n");
+        op = data->results[i];
+        if(op.id == id){
+            if('I' == op.status)
+                printf("ainda não foi recebido no restaurante!\n");
             else{
-                printf("foi tratado pelo restaurante %d, ", op->receiving_rest);
-                if('R' == op->status)
-                    printf("aidna não foi recebido pelo motorista!\n");
+                printf("foi tratado pelo restaurante %d, ", op.receiving_rest);
+                if('R' == op.status)
+                    printf("ainda não foi recebido pelo motorista!\n");
                 else{
-                    printf("foi ecaminhado pelo motorista %d, ", op->receiving_driver);
-                    if('D' == op->status)
-                        printf("aidna não foi recebido pelo cliente!\n");
+                    printf("foi ecaminhado pelo motorista %d, ", op.receiving_driver);
+                    if('D' == op.status)
+                        printf("ainda não foi recebido pelo cliente!\n");
                     else{
-                        printf("foi recebido pelo cliente %d.\n", op->receiving_client);
+                        printf("foi recebido pelo cliente %d.\n", op.receiving_client);
                     }
                 }
             }
@@ -159,11 +166,11 @@ void stop_execution(struct main_data* data, struct communication_buffers* buffer
 
 void wait_processes(struct main_data* data){
     for (size_t i = 0; i < data->n_restaurants; i++)
-        *data->restaurant_stats = wait_process(data->restaurant_pids[i]);
+        data->restaurant_stats[i] = wait_process(data->restaurant_pids[i]);
     for (size_t i = 0; i < data->n_drivers; i++)
-        *data->driver_stats = wait_process(data->driver_pids[i]);
+        data->driver_stats[i] = wait_process(data->driver_pids[i]);
     for (size_t i = 0; i < data->n_clients; i++)
-        *data->client_stats = wait_process(data->client_pids[i]);
+        data->client_stats[i] = wait_process(data->client_pids[i]);
 }
 
 void write_statistics(struct main_data* data){
@@ -201,7 +208,7 @@ void destroy_memory_buffers(struct main_data* data, struct communication_buffers
         destroy_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, buffers->driv_cli->ptrs, data->buffers_size * sizeof(int));
         //results and terminate
         destroy_shared_memory(STR_SHM_RESULTS, data->results, data->max_ops * sizeof(struct operation));
-        destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
+
 }
 
 int main(int argc, char *argv[]) { 
@@ -220,6 +227,7 @@ int main(int argc, char *argv[]) {
     user_interaction(buffers, data); 
     
     //release memory before terminating 
+    destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
     destroy_dynamic_memory(data); 
     destroy_dynamic_memory(buffers->main_rest); 
     destroy_dynamic_memory(buffers->rest_driv); 

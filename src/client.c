@@ -24,6 +24,7 @@ void client_get_operation(struct operation* op, int client_id, struct communicat
 }
 
 void client_process_operation(struct operation* op, int client_id, struct main_data* data, int* counter){
+    printf("receiving client %d\n", client_id);
     op->receiving_client = client_id;
     op->status = 'C';
     (*counter)++;
