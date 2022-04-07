@@ -5,18 +5,15 @@
 #include "driver.h"
 #include "client.h"
 
-//  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h" //so that vs can dettect the erros TO REMOVE!!!!!!
-//  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/main.h"
-//  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/process.h"
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 void main_args(int argc, char* argv[], struct main_data* data) {
     if (argc != 6){
-        printf("Não colocou o numero argumentos certo, tente novamente.\n");
+        printf("Uso: magnaeats max_ops buffers_size n_restaurants n_drivers n_clients\n");
+        printf("Exemplo: ./bin/magnaeats 10 10 1 1 1\n");
         exit(0);
     }
    //Putting args in struct "data"
@@ -52,21 +49,21 @@ void create_shared_memory_buffers(struct main_data* data, struct communication_b
     data->results = create_shared_memory(STR_SHM_RESULTS, data->max_ops * sizeof(struct operation));
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
     *data->terminate = 0;
+    for (size_t i = 0; i < data->max_ops; i++){
+        data->results[i].id = -1;
+    }
+    
 }
 
 void launch_processes(struct communication_buffers* buffers, struct main_data* data){
     for (size_t i = 0; i < data->n_restaurants; i++){
         data->restaurant_pids[i] = launch_restaurant(i, buffers, data);
-        printf("Rest Launched pid: %d \n", data->restaurant_pids[i]);
-        printf("valor i %zu\n", i);
     }
     for (size_t i = 0; i < data->n_drivers; i++){
         data->driver_pids[i] = launch_driver(i, buffers, data);
-        printf("Driver Launched pid: %d \n", data->driver_pids[i]);
     }
     for (size_t i = 0; i < data->n_clients; i++){
         data->client_pids[i] = launch_client(i, buffers, data);
-        printf("Client Launched pid: %d \n", data->client_pids[i]);
     }
 }
 
@@ -80,6 +77,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     printf("help - Imprime informação sobre as ações disponíveis.\n");
 
     while (*data->terminate == 0){
+        usleep(500);
         printf("Introduzir ação:\n");
         scanf("%s", interaction);
         if (strcmp("request", interaction) == 0) {
@@ -89,6 +87,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
             read_status(data);
         }
         else if (strcmp("stop", interaction) == 0) {
+            printf("Terminando o MAGNAEATS!\n");
             stop_execution(data, buffers);
         }
         else if (strcmp("help", interaction) == 0) {
@@ -109,12 +108,20 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         struct operation new_operation;
         int client;
         int rest;
+        //TODO
         char dish[20];
+        //TODO
         scanf("%d %d %s", &client, &rest, dish);
+        printf("Dish: %s\n", dish);
         new_operation.id = *op_counter;
         new_operation.requesting_client = client;
         new_operation.requested_rest = rest;
+        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //printf("------------%p\n", new_operation.requested_dish);
+        //strcpy(new_operation.requested_dish, dish);
         new_operation.requested_dish = dish;
+        //printf("Dish??: %s\n", new_operation.requested_dish);
+        //TOD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         new_operation.status = 'I';
         data->results[new_operation.id] = new_operation;
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
@@ -122,22 +129,19 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         printf("O pedido #%d foi criado!\n", new_operation.id);
     }
     else
-        printf("Numero maximo de operações alcançado!!!");
+        printf("Numero maximo de operações alcançado!!!\n");
 }
 
 void read_status(struct main_data* data){
     int id;
     struct operation op;
-    // for (size_t i = 0; i < data->max_ops; i++)
-    // {
-    //     printf("%d %d %d %d\n", data->results[i].requesting_client, data->results[i].requested_rest, data->results[i].receiving_client\
-    //     , data->results[i].receiving_rest);
-    // }
-    //printf("\n%d %d %d %d %c\n", op.id, op.receiving_client, op.receiving_driver, op.receiving_rest, op.status );
+    int found = 0;
     scanf("%d", &id);
     for (size_t i = 0; i < data->max_ops; i++){
         op = data->results[i];
-        if(op.id == id){
+        if(op.id == id && found == 0){
+            found = 1;
+            printf("Pedido %d com estado %c requisitado pelo cliente %d ao restaurante %d com o prato %s, ", op.id, op.status, op.requesting_client, op.requested_rest, op.requested_dish);
             if('I' == op.status)
                 printf("ainda não foi recebido no restaurante!\n");
             else{
@@ -155,6 +159,8 @@ void read_status(struct main_data* data){
             }
         }
     }
+    if (found == 0)
+        printf("O Pedido %d ainda não é válido!\n", id);
 }
 
 void stop_execution(struct main_data* data, struct communication_buffers* buffers){
@@ -174,14 +180,15 @@ void wait_processes(struct main_data* data){
 }
 
 void write_statistics(struct main_data* data){
+    printf("Imprimindo estatísticas:\n");
     for (size_t i = 0; i < data->n_restaurants; i++){
-        printf("Operações processadas pelo Restaurante %zu: %d\n", i, data->restaurant_stats[i]);
+        printf("Restaurante %zu preparou %d pedidos!\n", i, data->restaurant_stats[i]);
     }
     for (size_t i = 0; i < data->n_drivers; i++){
-        printf("Operações processadas pelo Condutor %zu: %d\n", i, data->driver_stats[i]);
+        printf("Motorista %zu entregou %d pedidos!\n", i, data->driver_stats[i]);
     }
     for (size_t i = 0; i < data->n_clients; i++){
-        printf("Operações processadas pelo Cliente %zu: %d\n", i, data->client_stats[i]);
+        printf("Cliente %zu recebeu %d pedidos!\n", i, data->client_stats[i]);
     }
 }
 
