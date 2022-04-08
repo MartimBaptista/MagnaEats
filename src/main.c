@@ -104,7 +104,6 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
 }
 
 void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data){
-    if(*op_counter < data->max_ops){
         struct operation new_operation;
         int client;
         int rest;
@@ -112,6 +111,7 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         char dish[20];
         //TODO
         scanf("%d %d %s", &client, &rest, dish);
+    if(*op_counter < data->max_ops){
         printf("Dish: %s\n", dish);
         new_operation.id = *op_counter;
         new_operation.requesting_client = client;
