@@ -32,5 +32,6 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     op->receiving_client = client_id;
     op->status = 'C';
     (*counter)++;
-    data->results[op->id] = *op;
+    data->results[op->id].receiving_client = op->receiving_client;
+    data->results[op->id].status = op->status;
 }

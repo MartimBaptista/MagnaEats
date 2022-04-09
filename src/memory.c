@@ -12,14 +12,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-//ROMOVE!!!!!!!!!!!!
-
-
-  #include "memory.h"
-  #include "main.h"
-  #include "process.h"
-
-//ROMOVE!!!!!!!!!!!!
 
 void* create_shared_memory(char* name, int size){
     void* ptr;

@@ -52,6 +52,10 @@ void create_shared_memory_buffers(struct main_data* data, struct communication_b
     buffers->driv_cli->buffer = create_shared_memory(STR_SHM_DRIVER_CLIENT_BUFFER, op_buffer_size);
     //results and terminate
     data->results = create_shared_memory(STR_SHM_RESULTS, data->max_ops * sizeof(struct operation));
+    for (size_t i = 0; i < data->max_ops; i++){
+        data->results[i].requested_dish = create_dynamic_memory(20 * sizeof(char));
+    }
+    
     data->terminate = create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
     *data->terminate = 0;
     for (size_t i = 0; i < data->max_ops; i++){
@@ -109,18 +113,23 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
 }
 
 void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data){
-        struct operation new_operation;
-        int client;
-        int rest;
-        char dish[20];
-        scanf("%d %d %s", &client, &rest, dish);
+    struct operation new_operation;
+    int client;
+    int rest;
+    char dish[20];
+    scanf("%d %d %s", &client, &rest, dish);
     if(*op_counter < data->max_ops){
+        //assembling new op
         new_operation.id = *op_counter;
         new_operation.requesting_client = client;
         new_operation.requested_rest = rest;
-        new_operation.requested_dish = dish;
         new_operation.status = 'I';
-        data->results[new_operation.id] = new_operation;
+        //putting in results
+        data->results[new_operation.id].id = new_operation.id;
+        data->results[new_operation.id].requesting_client = new_operation.requesting_client;
+        data->results[new_operation.id].requested_rest = new_operation.requested_rest;
+        strcpy(data->results[new_operation.id].requested_dish, dish);
+        //sending to new op rest
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
         (*op_counter)++;
         printf("O pedido #%d foi criado!\n", new_operation.id);
@@ -210,7 +219,10 @@ void destroy_memory_buffers(struct main_data* data, struct communication_buffers
     //DRIV -> CLI
     destroy_shared_memory(STR_SHM_DRIVER_CLIENT_BUFFER, buffers->driv_cli->buffer, op_buffer_size);
     destroy_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, buffers->driv_cli->ptrs, data->buffers_size * sizeof(int));
-    //results and terminate
+    //results
+    for (size_t i = 0; i < data->max_ops; i++){
+        destroy_dynamic_memory(data->results[i].requested_dish);
+    }
     destroy_shared_memory(STR_SHM_RESULTS, data->results, data->max_ops * sizeof(struct operation));
 
 }
