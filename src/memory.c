@@ -1,3 +1,8 @@
+/* Sistemas Operativos 2021/2022. Projeto 1. Grupo SO-004
+    Realizado por: Cosmin Trandafir Nº 57101
+                   João Serafim     Nº 56376
+                   Martim Baptista  Nº 56273
+*/
 #include "memory.h"
 
 #include <stdlib.h>
@@ -10,9 +15,9 @@
 //ROMOVE!!!!!!!!!!!!
 
 
-  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/memory.h"
-  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/main.h"
-  #include "/home/martin/Documents/MagnaEats/MagnaEats/include/process.h"
+  #include "memory.h"
+  #include "main.h"
+  #include "process.h"
 
 //ROMOVE!!!!!!!!!!!!
 

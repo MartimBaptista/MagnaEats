@@ -1,3 +1,8 @@
+/* Sistemas Operativos 2021/2022. Projeto 1. Grupo SO-004
+    Realizado por: Cosmin Trandafir Nº 57101
+                   João Serafim     Nº 56376
+                   Martim Baptista  Nº 56273
+*/ 
 #include "main.h"
 #include "process.h"
 #include "memory.h"
@@ -107,21 +112,13 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         struct operation new_operation;
         int client;
         int rest;
-        //TODO
         char dish[20];
-        //TODO
         scanf("%d %d %s", &client, &rest, dish);
     if(*op_counter < data->max_ops){
-        printf("Dish: %s\n", dish);
         new_operation.id = *op_counter;
         new_operation.requesting_client = client;
         new_operation.requested_rest = rest;
-        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //printf("------------%p\n", new_operation.requested_dish);
-        //strcpy(new_operation.requested_dish, dish);
         new_operation.requested_dish = dish;
-        //printf("Dish??: %s\n", new_operation.requested_dish);
-        //TOD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         new_operation.status = 'I';
         data->results[new_operation.id] = new_operation;
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
@@ -194,27 +191,27 @@ void write_statistics(struct main_data* data){
 
 void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers){
     //Dynamica memory destruction
-        destroy_dynamic_memory(data->restaurant_pids);
-        destroy_dynamic_memory(data->driver_pids);
-        destroy_dynamic_memory(data->client_pids);
+    destroy_dynamic_memory(data->restaurant_pids);
+    destroy_dynamic_memory(data->driver_pids);
+    destroy_dynamic_memory(data->client_pids);
 
-        destroy_dynamic_memory(data->restaurant_stats);
-        destroy_dynamic_memory(data->driver_stats);
-        destroy_dynamic_memory(data->client_stats);
+    destroy_dynamic_memory(data->restaurant_stats);
+    destroy_dynamic_memory(data->driver_stats);
+    destroy_dynamic_memory(data->client_stats);
 
     //Shared memory destruction
-        size_t op_buffer_size = data->buffers_size * sizeof(struct operation);
-        //MAIN -> REST
-        destroy_shared_memory(STR_SHM_MAIN_REST_BUFFER, buffers->main_rest->buffer, op_buffer_size);
-        destroy_shared_memory(STR_SHM_MAIN_REST_PTR, buffers->main_rest->ptrs, data->buffers_size * sizeof(int));
-        //REST -> DRIV
-        destroy_shared_memory(STR_SHM_REST_DRIVER_BUFFER, buffers->rest_driv->buffer, op_buffer_size);
-        destroy_shared_memory(STR_SHM_REST_DRIVER_PTR, buffers->rest_driv->ptrs, data->buffers_size * sizeof(struct pointers));
-        //DRIV -> CLI
-        destroy_shared_memory(STR_SHM_DRIVER_CLIENT_BUFFER, buffers->driv_cli->buffer, op_buffer_size);
-        destroy_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, buffers->driv_cli->ptrs, data->buffers_size * sizeof(int));
-        //results and terminate
-        destroy_shared_memory(STR_SHM_RESULTS, data->results, data->max_ops * sizeof(struct operation));
+    size_t op_buffer_size = data->buffers_size * sizeof(struct operation);
+    //MAIN -> REST
+    destroy_shared_memory(STR_SHM_MAIN_REST_BUFFER, buffers->main_rest->buffer, op_buffer_size);
+    destroy_shared_memory(STR_SHM_MAIN_REST_PTR, buffers->main_rest->ptrs, data->buffers_size * sizeof(int));
+    //REST -> DRIV
+    destroy_shared_memory(STR_SHM_REST_DRIVER_BUFFER, buffers->rest_driv->buffer, op_buffer_size);
+    destroy_shared_memory(STR_SHM_REST_DRIVER_PTR, buffers->rest_driv->ptrs, data->buffers_size * sizeof(struct pointers));
+    //DRIV -> CLI
+    destroy_shared_memory(STR_SHM_DRIVER_CLIENT_BUFFER, buffers->driv_cli->buffer, op_buffer_size);
+    destroy_shared_memory(STR_SHM_DRIVER_CLIENT_PTR, buffers->driv_cli->ptrs, data->buffers_size * sizeof(int));
+    //results and terminate
+    destroy_shared_memory(STR_SHM_RESULTS, data->results, data->max_ops * sizeof(struct operation));
 
 }
 

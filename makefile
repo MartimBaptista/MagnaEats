@@ -1,3 +1,7 @@
+# Sistemas Operativos 2021/2022. Projeto 1. Grupo SO-004
+# Realizado por: Cosmin Trandafir Nº 57101
+#                João Serafim     Nº 56376
+#                Martim Baptista  Nº 56273
 OBJ_dir = obj
 OBJ = client.o driver.o main.o memory.o process.o restaurant.o
 HEADERS_dir = include
