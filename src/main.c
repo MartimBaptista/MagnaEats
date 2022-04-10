@@ -155,7 +155,7 @@ void read_status(struct main_data* data){
                 if('R' == op.status)
                     printf("ainda não foi recebido pelo motorista!\n");
                 else{
-                    printf("foi ecaminhado pelo motorista %d, ", op.receiving_driver);
+                    printf("foi encaminhado pelo motorista %d, ", op.receiving_driver);
                     if('D' == op.status)
                         printf("ainda não foi recebido pelo cliente!\n");
                     else{
