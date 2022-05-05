@@ -8,35 +8,51 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int execute_restaurant(int rest_id, struct communication_buffers* buffers, struct main_data* data){
+int execute_restaurant(int rest_id, struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     int counter = 0;
     while (*data->terminate == 0){
         struct operation op;
-        restaurant_receive_operation(&op, rest_id, buffers, data);
+        //SECCAO CRITICA
+        restaurant_receive_operation(&op, rest_id, buffers, data, sems);
         if(op.id != -1){
             printf("Restaurante recebeu pedido!\n");
-            restaurant_process_operation(&op, rest_id, data, &counter);
-            restaurant_forward_operation(&op, buffers, data);
+            restaurant_process_operation(&op, rest_id, data, &counter, sems);
+            restaurant_forward_operation(&op, buffers, data, sems);
         }
+        //-----------------------------------
     }
     return counter;
 }
 
-void restaurant_receive_operation(struct operation* op, int rest_id, struct communication_buffers* buffers, struct main_data* data){
+void restaurant_receive_operation(struct operation* op, int rest_id, struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     if(*data->terminate == 1)
         return;
-    else
+    else{
+        consume_begin(sems->main_rest);
+        //SECCAO CRITICA
         read_main_rest_buffer(buffers->main_rest, rest_id, data->buffers_size, op);
+        //-----------------------------
+        consume_begin(sems->main_rest);
+    }
+        
 }
 
-void restaurant_process_operation(struct operation* op, int rest_id, struct main_data* data, int* counter){
+void restaurant_process_operation(struct operation* op, int rest_id, struct main_data* data, int* counter, struct semaphores* sems){
+    produce_begin(sems->main_rest);
+    //SECCAO CRITICA
     op->receiving_rest = rest_id;
     op->status = 'R';
     (*counter)++;
     data->results[op->id].receiving_rest = op->receiving_rest;
     data->results[op->id].status = op->status;
+    //_---------------------
+    produce_end(sems->main_rest);
 }
 
-void restaurant_forward_operation(struct operation* op, struct communication_buffers* buffers, struct main_data* data){
+void restaurant_forward_operation(struct operation* op, struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
+    produce_begin(sems->rest_driv);
+    //SECCAO CRITICA
     write_rest_driver_buffer(buffers->rest_driv, data->buffers_size, op);
+    //-----------------
+    produce_end(sems->rest_driv);
 }
