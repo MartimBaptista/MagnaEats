@@ -1,0 +1,8 @@
+max_ops:                     //nº máximo de operações
+buffers_size:                //tamanho dos buffers
+n_restaurants:               //nº de restaurantes
+n_drivers:                   //nº de motoristas
+n_clients:                   //nº de clientes
+log_filename:                //nome do ficheiro de log
+statistics_filename:         //nome do ficheiro de estatísticas
+alarm_time:                  //temporização para o alarme

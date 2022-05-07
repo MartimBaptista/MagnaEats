@@ -9,6 +9,8 @@
 #include "restaurant.h"
 #include "driver.h"
 #include "client.h"
+#include "configuration.h"
+#include "mesignal.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -16,12 +18,16 @@
 #include <unistd.h>
 
 void main_args(int argc, char* argv[], struct main_data* data) {
-    if (argc != 6){
+    //TODO MUDAR ISTO MOST LIKELY
+    if (argc != 2){
         printf("Uso: magnaeats max_ops buffers_size n_restaurants n_drivers n_clients\n");
         printf("Exemplo: ./bin/magnaeats 10 10 1 1 1\n");
         exit(0);
     }
+    configRead(argv, data);
    //Putting args in struct "data"
+
+   //prob remove this too ---------------
    data->max_ops = atoi(argv[1]);
    data->buffers_size = atoi(argv[2]);
    data->n_clients = atoi(argv[3]);
