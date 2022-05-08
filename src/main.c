@@ -276,21 +276,28 @@ void destroy_semaphores(struct semaphores* sems){
     semaphore_destroy(STR_SEM_RESULTS_MUTEX, sems->results_mutex);
 }
 
-/*
+
 int main(int argc, char *argv[]) { 
     //init data structures 
-    struct main_data* data = create_dynamic_memory(sizeof(struct main_data)); 
-    struct communication_buffers* buffers = create_dynamic_memory(sizeof(struct communication_buffers)); 
-    buffers->main_rest = create_dynamic_memory(sizeof(struct rnd_access_buffer)); 
-    buffers->rest_driv = create_dynamic_memory(sizeof(struct circular_buffer)); 
-    buffers->driv_cli = create_dynamic_memory(sizeof(struct rnd_access_buffer)); 
+    struct main_data* data = create_dynamic_memory(sizeof(struct main_data));
+    struct communication_buffers* buffers = create_dynamic_memory(sizeof(struct communication_buffers));
+    buffers->main_rest = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+    buffers->rest_driv = create_dynamic_memory(sizeof(struct circular_buffer));
+    buffers->driv_cli = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+
+    // init semaphore data structure
+    struct semaphores* sems = create_dynamic_memory(sizeof(struct semaphores));
+    sems->main_rest = create_dynamic_memory(sizeof(struct prodcons));
+    sems->rest_driv = create_dynamic_memory(sizeof(struct prodcons));
+    sems->driv_cli = create_dynamic_memory(sizeof(struct prodcons));
  
     //execute main code 
-    main_args(argc, argv, data); 
-    create_dynamic_memory_buffers(data); 
-    create_shared_memory_buffers(data, buffers); 
-    launch_processes(buffers, data); 
-    user_interaction(buffers, data); 
+    main_args(argc, argv, data);
+    create_dynamic_memory_buffers(data);
+    create_shared_memory_buffers(data, buffers);
+    create_semaphores(data, sems);
+    launch_processes(buffers, data, sems); 
+    user_interaction(buffers, data, sems); 
     
     //release memory before terminating 
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
@@ -298,37 +305,9 @@ int main(int argc, char *argv[]) {
     destroy_dynamic_memory(buffers->main_rest); 
     destroy_dynamic_memory(buffers->rest_driv); 
     destroy_dynamic_memory(buffers->driv_cli); 
-    destroy_dynamic_memory(buffers); 
-} 
-*/
-
-int main(int argc, char *argv[]) {
-//init data structures
-struct main_data* data = create_dynamic_memory(sizeof(struct main_data));
-struct communication_buffers* buffers = create_dynamic_memory(sizeof(struct communication_buffers));
-buffers->main_rest = create_dynamic_memory(sizeof(struct rnd_access_buffer));
-buffers->rest_driv = create_dynamic_memory(sizeof(struct circular_buffer));
-buffers->driv_cli = create_dynamic_memory(sizeof(struct rnd_access_buffer));
-// init semaphore data structure
-struct semaphores* sems = create_dynamic_memory(sizeof(struct semaphores));
-sems->main_rest = create_dynamic_memory(sizeof(struct prodcons));
-sems->rest_driv = create_dynamic_memory(sizeof(struct prodcons));
-sems->driv_cli = create_dynamic_memory(sizeof(struct prodcons));
-//execute main code
-main_args(argc, argv, data);
-create_dynamic_memory_buffers(data);
-create_shared_memory_buffers(data, buffers);
-create_semaphores(data, sems);
-launch_processes(buffers, data, sems);
-user_interaction(buffers, data, sems);
-//release memory before terminating
-destroy_dynamic_memory(data);
-destroy_dynamic_memory(buffers->main_rest);
-destroy_dynamic_memory(buffers->rest_driv);
-destroy_dynamic_memory(buffers->driv_cli);
-destroy_dynamic_memory(buffers);
-destroy_dynamic_memory(sems->main_rest);
-destroy_dynamic_memory(sems->rest_driv);
-destroy_dynamic_memory(sems->driv_cli);
-destroy_dynamic_memory(sems);
+    destroy_dynamic_memory(buffers);
+    destroy_dynamic_memory(sems->main_rest);
+    destroy_dynamic_memory(sems->rest_driv);
+    destroy_dynamic_memory(sems->driv_cli);
+    destroy_dynamic_memory(sems);
 }
