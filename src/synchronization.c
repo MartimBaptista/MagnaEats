@@ -14,7 +14,11 @@ sem_t * semaphore_create(char* name, int value){
 }
 
 
-void semaphore_destroy(char* name, sem_t* semaphore){//--------pra que o semaphore?
+void semaphore_destroy(char* name, sem_t* semaphore){
+    if (sem_close (semaphore) == -1) {
+        perror ("sem_close"); exit (1);
+    }
+    
     if (sem_unlink (name) == -1) {
         perror ("sem_unlink"); exit (1);
     }

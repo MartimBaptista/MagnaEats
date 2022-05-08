@@ -82,7 +82,7 @@ void launch_processes(struct communication_buffers* buffers, struct main_data* d
     }
 }
 
-void user_interaction(struct communication_buffers* buffers, struct main_data* data/*, struct semaphores* sems*/){
+void user_interaction(struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     char interaction[20];
     int counter;
     printf("Ações disponíveis:\n");
@@ -96,14 +96,14 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
         printf("Introduzir ação:\n");
         scanf("%s", interaction);
         if (strcmp("request", interaction) == 0) {
-            create_request(&counter, buffers, data);
+            create_request(&counter, buffers, data, sems);
         }
         else if (strcmp("status", interaction) == 0) {
-            read_status(data);
+            read_status(data, sems);
         }
         else if (strcmp("stop", interaction) == 0) {
             printf("Terminando o MAGNAEATS!\n");
-            stop_execution(data, buffers);
+            stop_execution(data, buffers, sems);
         }
         else if (strcmp("help", interaction) == 0) {
             printf("Ações disponíveis:\n");
@@ -118,7 +118,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     }
 }
 
-void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data/*, struct semaphores* sems*/){
+void create_request(int* op_counter, struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     struct operation new_operation;
     int client;
     int rest;
@@ -136,7 +136,11 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         data->results[new_operation.id].requested_rest = new_operation.requested_rest;
         strcpy(data->results[new_operation.id].requested_dish, dish);
         //sending to new op rest
+        produce_begin(sems->main_rest);
+        //SECCAO CRITICA
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
+        //----------
+        produce_end(sems->main_rest);
         (*op_counter)++;
         printf("O pedido #%d foi criado!\n", new_operation.id);
     }
@@ -144,7 +148,7 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         printf("Numero maximo de operações alcançado!!!\n");
 }
 
-void read_status(struct main_data* data/*, struct semaphores* sems*/){
+void read_status(struct main_data* data, struct semaphores* sems){//--------------sems nao implementado
     int id;
     struct operation op;
     int found = 0;
@@ -175,11 +179,13 @@ void read_status(struct main_data* data/*, struct semaphores* sems*/){
         printf("O Pedido %d ainda não é válido!\n", id);
 }
 
-void stop_execution(struct main_data* data, struct communication_buffers* buffers/*, struct semaphores* sems*/){
+void stop_execution(struct main_data* data, struct communication_buffers* buffers, struct semaphores* sems){
     *data->terminate = 1;
     wait_processes(data);
     write_statistics(data);
+    wakeup_processes(data, sems);
     destroy_memory_buffers(data, buffers);
+    destroy_semaphores(sems);
 }
 
 void wait_processes(struct main_data* data){
