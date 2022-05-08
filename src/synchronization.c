@@ -13,7 +13,6 @@ sem_t * semaphore_create(char* name, int value){
     return semaphore;
 }
 
-
 void semaphore_destroy(char* name, sem_t* semaphore){
     if (sem_close (semaphore) == -1) {
         perror ("sem_close"); exit (1);
@@ -24,39 +23,30 @@ void semaphore_destroy(char* name, sem_t* semaphore){
     }
 }
 
-
 void produce_begin(struct prodcons* pc){
-    sem_wait(pc->mutex);
     sem_wait(pc->empty);
-    sem_wait(pc->full); 
+    sem_wait(pc->mutex);
 }
-
 
 void produce_end(struct prodcons* pc){
     sem_post(pc->mutex);
-    sem_post(pc->empty);
     sem_post(pc->full); 
 }
 
 void consume_begin(struct prodcons* pc){
+    sem_wait(pc->full);
     sem_wait(pc->mutex);
-    sem_wait(pc->empty);
-    sem_wait(pc->full); 
 }
-
 
 void consume_end(struct prodcons* pc){
     sem_post(pc->mutex);
     sem_post(pc->empty);
-    sem_post(pc->full); 
 }
-
 
 void semaphore_mutex_lock(sem_t* sem){
-    sem = Lock();
+    sem_wait(sem);
 }
 
-
 void semaphore_mutex_unlock(sem_t* sem){
-    sem = Unlock();
+    sem_post(sem);
 }
