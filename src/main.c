@@ -130,16 +130,18 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         new_operation.requesting_client = client;
         new_operation.requested_rest = rest;
         new_operation.status = 'I';
+
         //putting in results
+        semaphore_mutex_lock(sems->results_mutex);
         data->results[new_operation.id].id = new_operation.id;
         data->results[new_operation.id].requesting_client = new_operation.requesting_client;
         data->results[new_operation.id].requested_rest = new_operation.requested_rest;
         strcpy(data->results[new_operation.id].requested_dish, dish);
+        semaphore_mutex_unlocklock(sems->results_mutex);
+
         //sending to new op rest
         produce_begin(sems->main_rest);
-        //SECCAO CRITICA
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
-        //----------
         produce_end(sems->main_rest);
         (*op_counter)++;
         printf("O pedido #%d foi criado!\n", new_operation.id);
@@ -148,11 +150,12 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         printf("Numero maximo de operações alcançado!!!\n");
 }
 
-void read_status(struct main_data* data, struct semaphores* sems){//--------------sems nao implementado
+void read_status(struct main_data* data, struct semaphores* sems){
     int id;
     struct operation op;
     int found = 0;
     scanf("%d", &id);
+    semaphore_mutex_lock(sems->results_mutex);
     for (size_t i = 0; i < data->max_ops; i++){
         op = data->results[i];
         if(op.id == id && found == 0){
@@ -175,6 +178,7 @@ void read_status(struct main_data* data, struct semaphores* sems){//------------
             }
         }
     }
+    semaphore_mutex_unlock(sems->results_mutex);
     if (found == 0)
         printf("O Pedido %d ainda não é válido!\n", id);
 }
