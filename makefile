@@ -7,7 +7,7 @@ OBJ = client.o driver.o main.o memory.o process.o restaurant.o configuration.o m
 HEADERS_dir = include
 
 magnaeats: $(OBJ)
-	gcc $(addprefix $(OBJ_dir)/,$(OBJ)) -o bin/magnaeats -lrt
+	gcc $(addprefix $(OBJ_dir)/,$(OBJ)) -o bin/magnaeats -lrt -lpthread
 %.o: src/%.c
 	gcc $< -c -I $(HEADERS_dir) -o $(OBJ_dir)/$@
 clean:
