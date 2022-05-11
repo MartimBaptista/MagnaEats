@@ -12,14 +12,12 @@ int execute_driver(int driver_id, struct communication_buffers* buffers, struct 
     int counter = 0;
     while (*data->terminate == 0) {
         struct operation op;
-        //SECCAO CRITICA
         driver_receive_operation(&op, buffers, data, sems);
         if(op.id != -1){
             printf("Motorista recebeu pedido!\n");
             driver_process_operation(&op, driver_id, data, &counter, sems);
             driver_send_answer(&op, buffers, data, sems);
         }
-        //----------------------
     }
     return counter;
 }
@@ -29,30 +27,24 @@ void driver_receive_operation(struct operation* op, struct communication_buffers
         return;
     else{
     consume_begin(sems->rest_driv);
-    //SECCAO CRITICA
-        read_rest_driver_buffer(buffers->rest_driv, data->buffers_size, op);
-    //------------
+    read_rest_driver_buffer(buffers->rest_driv, data->buffers_size, op);
     consume_end(sems->rest_driv);
     }
     
 }
 
 void driver_process_operation(struct operation* op, int driver_id, struct main_data* data, int* counter, struct semaphores* sems){
-    produce_begin(sems->rest_driv);
-    //SECCAO CRITICA
+    semaphore_mutex_lock(sems->results_mutex);
     op->receiving_driver = driver_id;
     op->status = 'D';
     (*counter)++;
     data->results[op->id].receiving_driver = op->receiving_driver;
     data->results[op->id].status = op->status;
-    //----------------
-    produce_end(sems->rest_driv);
+    semaphore_mutex_unlock(sems->results_mutex);
 }
 
 void driver_send_answer(struct operation* op, struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     produce_begin(sems->driv_cli);
-    //SECCAO CRITICA
     write_driver_client_buffer(buffers->driv_cli, data->buffers_size, op);
-    //-------------------
     produce_end(sems->driv_cli);
 }

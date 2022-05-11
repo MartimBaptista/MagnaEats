@@ -3,11 +3,11 @@
 #                João Serafim     Nº 56376
 #                Martim Baptista  Nº 56273
 OBJ_dir = obj
-OBJ = client.o driver.o main.o memory.o process.o restaurant.o
+OBJ = client.o driver.o main.o memory.o process.o restaurant.o configuration.o mesignal.o synchronization.o
 HEADERS_dir = include
 
 magnaeats: $(OBJ)
-	gcc $(addprefix $(OBJ_dir)/,$(OBJ)) -o bin/magnaeats -lrt
+	gcc $(addprefix $(OBJ_dir)/,$(OBJ)) -o bin/magnaeats -lrt -lpthread
 %.o: src/%.c
 	gcc $< -c -I $(HEADERS_dir) -o $(OBJ_dir)/$@
 clean:
