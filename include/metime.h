@@ -1,6 +1,8 @@
 #ifndef TIME_H_GUARD
 #define TIME_H_GUARD
 
+#include <time.h>
+
 //resgister a timespec to the moment this was called
 void register_timespec(struct timespec* time);
 
