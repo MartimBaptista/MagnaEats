@@ -20,6 +20,10 @@ struct main_data {
 	int* restaurant_stats;	//nº de operações encaminhadas por cada restaurante
 	int* driver_stats;		//nº de operações respondidas por cada motorista
 	int* client_stats;		//nº de operações recebidas por cada cliente
+
+	char log_filename[256];           //nome do ficheiro de log
+    char statistics_filename[256];    //nome do ficheiro de estatísticas
+    double alarm_time;                //temporização para o alarme
 	
 	struct operation* results;	//array com histórico de ops executadas
 	

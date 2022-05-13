@@ -18,21 +18,12 @@
 #include <unistd.h>
 
 void main_args(int argc, char* argv[], struct main_data* data) {
-    //TODO MUDAR ISTO MOST LIKELY
     if (argc != 2){
         printf("Uso: magnaeats max_ops buffers_size n_restaurants n_drivers n_clients\n");
-        printf("Exemplo: ./bin/magnaeats 10 10 1 1 1\n");
+        printf("Exemplo: ./bin/magnaeats \"Nome do ficheiro de configuraçao\"\n");
         exit(0);
     }
     configRead(argv, data);
-   //Putting args in struct "data"
-
-   //prob remove this too ---------------
-   data->max_ops = atoi(argv[1]);
-   data->buffers_size = atoi(argv[2]);
-   data->n_clients = atoi(argv[3]);
-   data->n_drivers = atoi(argv[4]);
-   data->n_restaurants = atoi(argv[5]);
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
@@ -114,6 +105,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
         }
         else {
             printf("Ação não reconhecida, insira 'help' para assistência.\n");
+            scanf("%*99[^\n]"); //way to clean the input
         }
     }
 }
@@ -185,11 +177,17 @@ void read_status(struct main_data* data, struct semaphores* sems){
 
 void stop_execution(struct main_data* data, struct communication_buffers* buffers, struct semaphores* sems){
     *data->terminate = 1;
+    printf("1\n");
     wait_processes(data);
+    printf("2\n");
     write_statistics(data);
+    printf("3\n");
     wakeup_processes(data, sems);
+    printf("4\n");
     destroy_memory_buffers(data, buffers);
+    printf("5\n");
     destroy_semaphores(sems);
+    printf("6\n");
 }
 
 void wait_processes(struct main_data* data){
@@ -305,10 +303,10 @@ int main(int argc, char *argv[]) {
     
     //release memory before terminating 
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
-    destroy_dynamic_memory(data); 
-    destroy_dynamic_memory(buffers->main_rest); 
-    destroy_dynamic_memory(buffers->rest_driv); 
-    destroy_dynamic_memory(buffers->driv_cli); 
+    destroy_dynamic_memory(data);
+    destroy_dynamic_memory(buffers->main_rest);
+    destroy_dynamic_memory(buffers->rest_driv);
+    destroy_dynamic_memory(buffers->driv_cli);
     destroy_dynamic_memory(buffers);
     destroy_dynamic_memory(sems->main_rest);
     destroy_dynamic_memory(sems->rest_driv);
