@@ -134,9 +134,10 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         //sending to new op rest
         produce_begin(sems->main_rest);
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
-        produce_end(sems->main_rest);
+
         (*op_counter)++;
         printf("O pedido #%d foi criado!\n", new_operation.id);
+        produce_end(sems->main_rest);
     }
     else
         printf("Numero maximo de operações alcançado!!!\n");
@@ -177,17 +178,11 @@ void read_status(struct main_data* data, struct semaphores* sems){
 
 void stop_execution(struct main_data* data, struct communication_buffers* buffers, struct semaphores* sems){
     *data->terminate = 1;
-    printf("1\n");
-    wait_processes(data);
-    printf("2\n");
-    write_statistics(data);
-    printf("3\n");
     wakeup_processes(data, sems);
-    printf("4\n");
+    wait_processes(data);
+    write_statistics(data);
     destroy_memory_buffers(data, buffers);
-    printf("5\n");
     destroy_semaphores(sems);
-    printf("6\n");
 }
 
 void wait_processes(struct main_data* data){
@@ -259,7 +254,12 @@ void create_semaphores(struct main_data* data, struct semaphores* sems){
 }
 
 void wakeup_processes(struct main_data* data, struct semaphores* sems){
-    
+    for (size_t i = 0; i < data->n_restaurants; i++)
+        produce_end(sems->main_rest);
+    for (size_t i = 0; i < data->n_drivers; i++)
+        produce_end(sems->rest_driv);
+    for (size_t i = 0; i < data->n_clients; i++)
+        produce_end(sems->driv_cli);
 }
 
 void destroy_semaphores(struct semaphores* sems){
