@@ -1,8 +1,8 @@
 max_ops: 10                             //nº máximo de operações
 buffers_size: 10                        //tamanho dos buffers
-n_restaurants: 1                        //nº de restaurantes
-n_drivers: 1                            //nº de motoristas
-n_clients: 1                            //nº de clientes
+n_restaurants: 3                        //nº de restaurantes
+n_drivers: 3                            //nº de motoristas
+n_clients: 3                            //nº de clientes
 log_filename: logFile.txt               //nome do ficheiro de log
 statistics_filename: statsFile.txt      //nome do ficheiro de estatísticas
 alarm_time: 1000                        //temporização para o alarme
