@@ -7,6 +7,7 @@
 
 sem_t * semaphore_create(char* name, int value){
     sem_t *semaphore;
+    sem_unlink(name); //in case they already exist from previous runs
     if ((semaphore = sem_open(name, O_CREAT, S_IROTH | S_IWOTH, value)) == SEM_FAILED) {
         perror("sem_open"); 
         exit (1);
