@@ -102,8 +102,8 @@ void read_main_rest_buffer(struct rnd_access_buffer* buffer, int rest_id, int bu
 void read_rest_driver_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
     op->id = -1;
     if(buffer->ptrs->in != buffer->ptrs->out){
-        buffer->ptrs->out = (buffer->ptrs->out + 1) % buffer_size;
         *op = buffer->buffer[buffer->ptrs->out];
+        buffer->ptrs->out = (buffer->ptrs->out + 1) % buffer_size;
     }
 }
 
