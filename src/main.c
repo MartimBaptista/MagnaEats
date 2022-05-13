@@ -128,6 +128,7 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         data->results[new_operation.id].id = new_operation.id;
         data->results[new_operation.id].requesting_client = new_operation.requesting_client;
         data->results[new_operation.id].requested_rest = new_operation.requested_rest;
+        data->results[new_operation.id].status = new_operation.status;
         strcpy(data->results[new_operation.id].requested_dish, dish);
         semaphore_mutex_unlock(sems->results_mutex);
 
