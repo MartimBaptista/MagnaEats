@@ -32,11 +32,14 @@ void client_get_operation(struct operation* op, int client_id, struct communicat
 }
 
 void client_process_operation(struct operation* op, int client_id, struct main_data* data, int* counter, struct semaphores* sems){
+    //marcar tempo
+    register_timespec(op->client_end_time);
     semaphore_mutex_lock(sems->results_mutex);
     op->receiving_client = client_id;
     op->status = 'C';
     (*counter)++;
     data->results[op->id].receiving_client = op->receiving_client;
     data->results[op->id].status = op->status;
+    data->results[op->id].client_end_time = op->client_end_time;
     semaphore_mutex_unlock(sems->results_mutex);
 }

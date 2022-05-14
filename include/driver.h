@@ -3,6 +3,7 @@
 
 #include "memory.h"
 #include "main.h"
+#include "metime.h"
 
 /* Função principal de um Motorista. Deve executar um ciclo infinito onde em 
 * cada iteração lê uma operação dos restaurantes e se a mesma tiver id 

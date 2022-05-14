@@ -33,12 +33,15 @@ void restaurant_receive_operation(struct operation* op, int rest_id, struct comm
 }
 
 void restaurant_process_operation(struct operation* op, int rest_id, struct main_data* data, int* counter, struct semaphores* sems){
+    //marcar tempo
+    register_timespec(op->rest_time);
     semaphore_mutex_lock(sems->results_mutex);
     op->receiving_rest = rest_id;
     op->status = 'R';
     (*counter)++;
     data->results[op->id].receiving_rest = op->receiving_rest;
     data->results[op->id].status = op->status;
+    data->results[op->id].rest_time = op->rest_time;
     semaphore_mutex_unlock(sems->results_mutex);
 }
 

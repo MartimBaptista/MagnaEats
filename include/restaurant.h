@@ -3,6 +3,7 @@
 
 #include "memory.h"
 #include "main.h"
+#include "metime.h"
 
 /* Função principal de um Restaurante. Deve executar um ciclo infinito onde em 
 * cada iteração lê uma operação da main e se for dirijida ao restaurante rest_id 

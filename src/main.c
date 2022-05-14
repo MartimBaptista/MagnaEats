@@ -123,6 +123,9 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         new_operation.requested_rest = rest;
         new_operation.status = 'I';
 
+        //getting time of new op
+        register_timespec(new_operation.start_time);
+        
         //putting in results
         semaphore_mutex_lock(sems->results_mutex);
         data->results[new_operation.id].id = new_operation.id;
@@ -130,6 +133,7 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         data->results[new_operation.id].requested_rest = new_operation.requested_rest;
         data->results[new_operation.id].status = new_operation.status;
         strcpy(data->results[new_operation.id].requested_dish, dish);
+        data->results[new_operation.id].start_time = new_operation.start_time;
         semaphore_mutex_unlock(sems->results_mutex);
 
         //sending to new op rest
@@ -249,7 +253,7 @@ void create_semaphores(struct main_data* data, struct semaphores* sems){
 
     sems->driv_cli->full = semaphore_create(STR_SEM_DRIV_CLI_FULL, 0);
     sems->driv_cli->empty = semaphore_create(STR_SEM_DRIV_CLI_EMPTY, data->buffers_size);
-    sems->driv_cli->mutex = semaphore_create(STR_SEM_REST_DRIV_MUTEX, 1);
+    sems->driv_cli->mutex = semaphore_create(STR_SEM_DRIV_CLI_MUTEX, 1);
 
     sems->results_mutex = semaphore_create(STR_SEM_RESULTS_MUTEX, 1);
 }
