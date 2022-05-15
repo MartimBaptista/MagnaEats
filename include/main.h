@@ -3,6 +3,7 @@
 
 #include "memory.h"
 #include "synchronization.h"
+#include "log.h"
 
 //Estrutura que agrega a informação necessária pela main do MAGNAEATS.
 struct main_data {

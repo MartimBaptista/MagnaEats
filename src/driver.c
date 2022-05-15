@@ -35,7 +35,7 @@ void driver_receive_operation(struct operation* op, struct communication_buffers
 
 void driver_process_operation(struct operation* op, int driver_id, struct main_data* data, int* counter, struct semaphores* sems){
     //marcar tempo
-    register_timespec(op->driver_time);
+    register_timespec(&(op->driver_time));
     semaphore_mutex_lock(sems->results_mutex);
     op->receiving_driver = driver_id;
     op->status = 'D';

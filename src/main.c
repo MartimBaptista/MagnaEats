@@ -24,6 +24,7 @@ void main_args(int argc, char* argv[], struct main_data* data) {
         exit(0);
     }
     configRead(argv, data);
+    newLogFile(data->log_filename);
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
@@ -87,16 +88,20 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
         printf("Introduzir ação:\n");
         scanf("%s", interaction);
         if (strcmp("request", interaction) == 0) {
+            add_log(interaction, -1);
             create_request(&counter, buffers, data, sems);
         }
         else if (strcmp("status", interaction) == 0) {
+            //addlog made in read_status
             read_status(data, sems);
         }
         else if (strcmp("stop", interaction) == 0) {
+            add_log(interaction, -1);
             printf("Terminando o MAGNAEATS!\n");
             stop_execution(data, buffers, sems);
         }
         else if (strcmp("help", interaction) == 0) {
+            add_log(interaction, -1);
             printf("Ações disponíveis:\n");
             printf("request (client) (restaurant) (dish) - Criar um novo pedido\n");
             printf("status (id) - Consultar o estado de um pedido\n");
@@ -122,10 +127,10 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         new_operation.requesting_client = client;
         new_operation.requested_rest = rest;
         new_operation.status = 'I';
-
-        //getting time of new op
-        register_timespec(new_operation.start_time);
         
+        //getting time of new op
+        register_timespec(&(new_operation.start_time));
+
         //putting in results
         semaphore_mutex_lock(sems->results_mutex);
         data->results[new_operation.id].id = new_operation.id;
@@ -153,6 +158,7 @@ void read_status(struct main_data* data, struct semaphores* sems){
     struct operation op;
     int found = 0;
     scanf("%d", &id);
+    add_log("status", id);
     semaphore_mutex_lock(sems->results_mutex);
     for (size_t i = 0; i < data->max_ops; i++){
         op = data->results[i];
@@ -186,6 +192,7 @@ void stop_execution(struct main_data* data, struct communication_buffers* buffer
     wakeup_processes(data, sems);
     wait_processes(data);
     write_statistics(data);
+    closeLogFile();
     destroy_memory_buffers(data, buffers);
     destroy_semaphores(sems);
 }

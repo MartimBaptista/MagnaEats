@@ -33,7 +33,7 @@ void client_get_operation(struct operation* op, int client_id, struct communicat
 
 void client_process_operation(struct operation* op, int client_id, struct main_data* data, int* counter, struct semaphores* sems){
     //marcar tempo
-    register_timespec(op->client_end_time);
+    register_timespec(&(op->client_end_time));
     semaphore_mutex_lock(sems->results_mutex);
     op->receiving_client = client_id;
     op->status = 'C';
