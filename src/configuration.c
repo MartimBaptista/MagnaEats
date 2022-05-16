@@ -1,5 +1,6 @@
 #include "configuration.h"
 #include "memory.h"
+#include "mesignal.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +42,8 @@ void configRead(char* argv[], struct main_data* data) {
     
     //Alarm_time
     fgets(linha, LINE_SIZE, configFile);
-    sscanf(linha, "%*s %lf %*s", &f.alarm_time);
+    sscanf(linha, "%*s %d %*s", &f.alarm_time);
+    set_alarm_time(f.alarm_time);
 
     fclose(configFile);
 }

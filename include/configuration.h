@@ -5,10 +5,10 @@
 #include "log.h"
 
 struct files{
-    
+
     char log_filename[256];           //nome do ficheiro de log
     char statistics_filename[256];    //nome do ficheiro de estatísticas
-    double alarm_time;                //temporização para o alarme
+    int alarm_time;                //temporização para o alarme
 };
 
 

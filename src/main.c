@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
+#include <sys/time.h>
 
 void main_args(int argc, char* argv[], struct main_data* data) {
     if (argc != 2){
@@ -75,7 +77,9 @@ void launch_processes(struct communication_buffers* buffers, struct main_data* d
 
 void user_interaction(struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     char interaction[20];
-    int counter;
+    int counter = 0; //veriifcar se noa precisa ser inicializado
+    struct itimerval* timer_value = get_alarm_time();
+    set_results_stats(data);
     printf("Ações disponíveis:\n");
     printf("request (client) (restaurant) (dish) - Criar um novo pedido\n");
     printf("status (id) - Consultar o estado de um pedido\n");
@@ -83,6 +87,10 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     printf("help - Imprime informação sobre as ações disponíveis.\n");
 
     while (*data->terminate == 0){
+        //alarm--------
+        signal(SIGALRM, alarm_stats);
+        setitimer(ITIMER_REAL, timer_value, 0);      
+        //-------------
         usleep(500);
         printf("Introduzir ação:\n");
         scanf("%s", interaction);
