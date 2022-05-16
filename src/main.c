@@ -24,7 +24,6 @@ void main_args(int argc, char* argv[], struct main_data* data) {
         exit(0);
     }
     configRead(argv, data);
-    newLogFile(data->log_filename);
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {

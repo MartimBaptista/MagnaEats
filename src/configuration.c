@@ -11,6 +11,7 @@
 void configRead(char* argv[], struct main_data* data) {
 
     char linha[LINE_SIZE];
+    struct files f;
 
     FILE *configFile;
     configFile = fopen("config.txt", "r");
@@ -28,10 +29,19 @@ void configRead(char* argv[], struct main_data* data) {
     sscanf(linha, "%*s %d %*s", &data->n_drivers);
     fgets(linha, LINE_SIZE, configFile);
     sscanf(linha, "%*s %d %*s", &data->n_clients);
+    
+    //Log_file
     fgets(linha, LINE_SIZE, configFile);
-    sscanf(linha, "%*s %s %*s", data->log_filename);
+    sscanf(linha, "%*s %s %*s", f.log_filename);
+    newLogFile(f.log_filename);
+
+    //Stats_file
     fgets(linha, LINE_SIZE, configFile);
-    sscanf(linha, "%*s %s %*s", data->statistics_filename);
+    sscanf(linha, "%*s %s %*s", f.statistics_filename);
+    
+    //Alarm_time
     fgets(linha, LINE_SIZE, configFile);
-    sscanf(linha, "%*s %lf %*s", &data->alarm_time);
+    sscanf(linha, "%*s %lf %*s", &f.alarm_time);
+
+    fclose(configFile);
 }
