@@ -10,7 +10,6 @@
 
 FILE *log_file;
 
-
 void newLogFile(char *filename){
     log_file = fopen(filename, "w");
     if (log_file == NULL){
@@ -31,9 +30,7 @@ void add_log(char *instruction, int argument){
     }
 
     strftime(buffer1, LINE_SIZE, "%Y-%m-%d %H:%M:%S", localtime(&(ts.tv_sec)));
-
     
-
     if (argument == -1)
         fprintf(log_file, "%s.%ld %s\n", buffer1, ts.tv_nsec/DIVISOR_NSEC, instruction);
     else 

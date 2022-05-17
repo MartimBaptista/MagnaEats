@@ -11,6 +11,7 @@
 #include "client.h"
 #include "configuration.h"
 #include "mesignal.h"
+#include "stats.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -89,8 +90,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     printf("help - Imprime informação sobre as ações disponíveis.\n");
 
     while (*data->terminate == 0){
-        //alarm + signal--------
-        
+        //alarm--------
         signal(SIGALRM, alarm_stats);
         setitimer(ITIMER_REAL, timer_value, 0);      
         //-------------
@@ -122,6 +122,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
             printf("Ação não reconhecida, insira 'help' para assistência.\n");
             scanf("%*99[^\n]"); //way to clean the input
         }
+        //signal
         sigaction(SIGINT, &sa, NULL);
     }
 }
@@ -203,6 +204,7 @@ void stop_execution(struct main_data* data, struct communication_buffers* buffer
     wakeup_processes(data, sems);
     wait_processes(data);
     write_statistics(data);
+    closeStatsFile();
     closeLogFile();
     destroy_memory_buffers(data, buffers);
     destroy_semaphores(sems);
@@ -218,16 +220,7 @@ void wait_processes(struct main_data* data){
 }
 
 void write_statistics(struct main_data* data){
-    printf("Imprimindo estatísticas:\n");
-    for (size_t i = 0; i < data->n_restaurants; i++){
-        printf("Restaurante %zu preparou %d pedidos!\n", i, data->restaurant_stats[i]);
-    }
-    for (size_t i = 0; i < data->n_drivers; i++){
-        printf("Motorista %zu entregou %d pedidos!\n", i, data->driver_stats[i]);
-    }
-    for (size_t i = 0; i < data->n_clients; i++){
-        printf("Cliente %zu recebeu %d pedidos!\n", i, data->client_stats[i]);
-    }
+    statistics(data);
 }
 
 void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers){

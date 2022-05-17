@@ -3,7 +3,7 @@
 #                João Serafim     Nº 56376
 #                Martim Baptista  Nº 56273
 OBJ_dir = obj
-OBJ = client.o driver.o main.o memory.o process.o restaurant.o configuration.o mesignal.o synchronization.o metime.o log.o
+OBJ = client.o driver.o main.o memory.o process.o restaurant.o configuration.o mesignal.o synchronization.o metime.o log.o stats.o
 HEADERS_dir = include
 
 magnaeats: $(OBJ)
