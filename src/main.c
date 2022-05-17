@@ -79,7 +79,9 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     char interaction[20];
     int counter = 0; //veriifcar se noa precisa ser inicializado
     struct itimerval* timer_value = get_alarm_time();
-    set_results_stats(data);
+    set_global_structs(data, buffers, sems);
+    struct sigaction sa = define_sigaction();
+    
     printf("Ações disponíveis:\n");
     printf("request (client) (restaurant) (dish) - Criar um novo pedido\n");
     printf("status (id) - Consultar o estado de um pedido\n");
@@ -87,7 +89,8 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     printf("help - Imprime informação sobre as ações disponíveis.\n");
 
     while (*data->terminate == 0){
-        //alarm--------
+        //alarm + signal--------
+        
         signal(SIGALRM, alarm_stats);
         setitimer(ITIMER_REAL, timer_value, 0);      
         //-------------
@@ -119,6 +122,7 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
             printf("Ação não reconhecida, insira 'help' para assistência.\n");
             scanf("%*99[^\n]"); //way to clean the input
         }
+        sigaction(SIGINT, &sa, NULL);
     }
 }
 

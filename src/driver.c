@@ -4,14 +4,17 @@
                    Martim Baptista  Nº 56273
 */ 
 #include "driver.h"
+#include "mesignal.h"
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 
 int execute_driver(int driver_id, struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     int counter = 0;
     while (*data->terminate == 0) {
         struct operation op;
+        signal(SIGINT, SIG_IGN);
         driver_receive_operation(&op, buffers, data, sems);
         if(op.id != -1){
             printf("Motorista recebeu pedido!\n");

@@ -5,4 +5,4 @@ n_drivers: 3                            //nº de motoristas
 n_clients: 3                            //nº de clientes
 log_filename: logFile.txt               //nome do ficheiro de log
 statistics_filename: statsFile.txt      //nome do ficheiro de estatísticas
-alarm_time: 10                          //temporização para o alarme
+alarm_time: 10000                         //temporização para o alarme

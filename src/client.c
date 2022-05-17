@@ -4,14 +4,17 @@
                    Martim Baptista  Nº 56273
 */ 
 #include "client.h"
+#include "mesignal.h"
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 
 int execute_client(int client_id, struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     int counter = 0;
     while (*data->terminate == 0){
         struct operation op;
+        signal(SIGINT, SIG_IGN);
         client_get_operation(&op, client_id, buffers, data, sems);
         if(op.id != -1){
             printf("Cliente recebeu pedido!\n");

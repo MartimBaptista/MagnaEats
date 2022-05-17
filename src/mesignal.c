@@ -9,21 +9,30 @@
 #include "memory.h"
 #include "main.h"
 
-struct operation* main_results;
-size_t max_operations;
+struct main_data* Data;
+struct communication_buffers* Buffers;
+struct semaphores* Sems;
 
 struct itimerval timer_value;
+
+
+void set_global_structs(struct main_data* data, struct communication_buffers* buffers, struct semaphores* sems){
+    Data = data;
+    Buffers = buffers;
+    Sems = sems;
+}
+
+
+//--------------Alarm----------------------
 
 void alarm_stats(){
     print_stats();
 }
 
-void set_results_stats(struct main_data* data){
-    main_results = data->results;
-    max_operations = data->max_ops;
-}
-
 void print_stats(){
+    struct operation* main_results = Data->results;
+    size_t max_operations = Data->max_ops;;
+
     for (size_t i = 0; i < max_operations && main_results[i].id != -1; i++)
     {
         if(strcmp(&main_results[i].status, "C")==0){
@@ -45,4 +54,20 @@ void set_alarm_time(int value){
     timer_value.it_interval.tv_usec = 0;
     timer_value.it_value.tv_sec = value;
     timer_value.it_value.tv_usec = 0;
+}
+
+//---------------Signal-------------------
+
+void ctrlC_signal(){
+    stop_execution(Data, Buffers, Sems);
+    usleep(1000);
+    kill(getpid(), SIGTERM);
+}
+
+struct sigaction define_sigaction(){
+    struct sigaction sa;
+    sa.sa_handler = ctrlC_signal;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    return sa;
 }
