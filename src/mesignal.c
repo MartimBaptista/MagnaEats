@@ -60,7 +60,7 @@ void set_alarm_time(int value){
 
 void ctrlC_signal(){
     stop_execution(Data, Buffers, Sems);
-    usleep(1000);
+    usleep(1);
     kill(getpid(), SIGTERM);
 }
 
