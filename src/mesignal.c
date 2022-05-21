@@ -66,6 +66,20 @@ void set_alarm_time(int value){
 void ctrlC_signal(){
     stop_execution(Data, Buffers, Sems);
     usleep(1);
+    
+    //release memory before terminating 
+    destroy_shared_memory(STR_SHM_TERMINATE, Data->terminate, sizeof(int));
+    destroy_dynamic_memory(Data);
+    destroy_dynamic_memory(Buffers->main_rest);
+    destroy_dynamic_memory(Buffers->rest_driv);
+    destroy_dynamic_memory(Buffers->driv_cli);
+    destroy_dynamic_memory(Buffers);
+    destroy_dynamic_memory(Sems->main_rest);
+    destroy_dynamic_memory(Sems->rest_driv);
+    destroy_dynamic_memory(Sems->driv_cli);
+    destroy_dynamic_memory(Sems);
+
+    usleep(1);
     kill(getpid(), SIGTERM);
 }
 
