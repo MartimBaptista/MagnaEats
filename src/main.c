@@ -91,7 +91,9 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
 
     while (*data->terminate == 0){
         signal(SIGALRM, alarm_stats);
-        setitimer(ITIMER_REAL, timer_value, 0);      
+        setitimer(ITIMER_REAL, timer_value, 0);
+        
+        sigaction(SIGINT, &sa, NULL);      
         usleep(500);
 
         printf("Introduzir ação:\n");
@@ -120,7 +122,6 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
             printf("Ação não reconhecida, insira 'help' para assistência.\n");
             scanf("%*99[^\n]"); //way to clean the input
         }
-        sigaction(SIGINT, &sa, NULL);
     }
 }
 
