@@ -1,3 +1,8 @@
+/* Sistemas Operativos 2021/2022. Projeto parte 2. Grupo SO-004
+    Realizado por: Cosmin Trandafir Nº 57101
+                   João Serafim     Nº 56376
+                   Martim Baptista  Nº 56273
+*/ 
 #include "configuration.h"
 #include "memory.h"
 #include "mesignal.h"
@@ -41,8 +46,7 @@ void configRead(char* argv[], struct main_data* data) {
     fgets(linha, LINE_SIZE, configFile);
     sscanf(linha, "%*s %s %*s", f.statistics_filename);
     newStatsFile(f.statistics_filename);
-    
-    
+      
     //Alarm_time
     fgets(linha, LINE_SIZE, configFile);
     sscanf(linha, "%*s %d %*s", &f.alarm_time);

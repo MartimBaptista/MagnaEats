@@ -1,3 +1,8 @@
+/* Sistemas Operativos 2021/2022. Projeto parte 2. Grupo SO-004
+    Realizado por: Cosmin Trandafir Nº 57101
+                   João Serafim     Nº 56376
+                   Martim Baptista  Nº 56273
+*/ 
 #include "log.h"
 
 #include <stdio.h>

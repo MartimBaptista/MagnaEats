@@ -1,8 +1,8 @@
-/* Sistemas Operativos 2021/2022. Projeto 1. Grupo SO-004
+/* Sistemas Operativos 2021/2022. Projeto parte 2. Grupo SO-004
     Realizado por: Cosmin Trandafir Nº 57101
                    João Serafim     Nº 56376
                    Martim Baptista  Nº 56273
-*/ 
+*/  
 #include "main.h"
 #include "process.h"
 #include "memory.h"
@@ -78,7 +78,7 @@ void launch_processes(struct communication_buffers* buffers, struct main_data* d
 
 void user_interaction(struct communication_buffers* buffers, struct main_data* data, struct semaphores* sems){
     char interaction[20];
-    int counter = 0; //veriifcar se noa precisa ser inicializado
+    int counter = 0;
     struct itimerval* timer_value = get_alarm_time();
     set_global_structs(data, buffers, sems);
     struct sigaction sa = define_sigaction();
@@ -90,11 +90,10 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
     printf("help - Imprime informação sobre as ações disponíveis.\n");
 
     while (*data->terminate == 0){
-        //alarm--------
         signal(SIGALRM, alarm_stats);
         setitimer(ITIMER_REAL, timer_value, 0);      
-        //-------------
         usleep(500);
+
         printf("Introduzir ação:\n");
         scanf("%s", interaction);
         if (strcmp("request", interaction) == 0) {
@@ -102,7 +101,6 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
             create_request(&counter, buffers, data, sems);
         }
         else if (strcmp("status", interaction) == 0) {
-            //addlog made in read_status
             read_status(data, sems);
         }
         else if (strcmp("stop", interaction) == 0) {
@@ -122,7 +120,6 @@ void user_interaction(struct communication_buffers* buffers, struct main_data* d
             printf("Ação não reconhecida, insira 'help' para assistência.\n");
             scanf("%*99[^\n]"); //way to clean the input
         }
-        //signal
         sigaction(SIGINT, &sa, NULL);
     }
 }
@@ -134,17 +131,14 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
     char dish[20];
     scanf("%d %d %s", &client, &rest, dish);
     if(*op_counter < data->max_ops){
-        //assembling new op
         new_operation.id = *op_counter;
         new_operation.requesting_client = client;
         new_operation.requested_rest = rest;
-        new_operation.status = 'I';
-        
-        //getting time of new op
+        new_operation.status = 'I';       
         register_timespec(&(new_operation.start_time));
 
-        //putting in results
         semaphore_mutex_lock(sems->results_mutex);
+
         data->results[new_operation.id].id = new_operation.id;
         data->results[new_operation.id].requesting_client = new_operation.requesting_client;
         data->results[new_operation.id].requested_rest = new_operation.requested_rest;
@@ -153,10 +147,8 @@ void create_request(int* op_counter, struct communication_buffers* buffers, stru
         data->results[new_operation.id].start_time = new_operation.start_time;
         semaphore_mutex_unlock(sems->results_mutex);
 
-        //sending to new op rest
         produce_begin(sems->main_rest);
         write_main_rest_buffer(buffers->main_rest, data->buffers_size, &new_operation);
-
         (*op_counter)++;
         printf("O pedido #%d foi criado!\n", new_operation.id);
         produce_end(sems->main_rest);
@@ -224,7 +216,7 @@ void write_statistics(struct main_data* data){
 }
 
 void destroy_memory_buffers(struct main_data* data, struct communication_buffers* buffers){
-    //Dynamica memory destruction
+    //Dynamic memory destruction
     destroy_dynamic_memory(data->restaurant_pids);
     destroy_dynamic_memory(data->driver_pids);
     destroy_dynamic_memory(data->client_pids);

@@ -1,8 +1,8 @@
-/* Sistemas Operativos 2021/2022. Projeto 1. Grupo SO-004
+/* Sistemas Operativos 2021/2022. Projeto parte 2. Grupo SO-004
     Realizado por: Cosmin Trandafir Nº 57101
                    João Serafim     Nº 56376
                    Martim Baptista  Nº 56273
-*/
+*/ 
 #include "restaurant.h"
 #include "mesignal.h"
 
@@ -36,7 +36,6 @@ void restaurant_receive_operation(struct operation* op, int rest_id, struct comm
 }
 
 void restaurant_process_operation(struct operation* op, int rest_id, struct main_data* data, int* counter, struct semaphores* sems){
-    //marcar tempo
     register_timespec(&(op->rest_time));
     semaphore_mutex_lock(sems->results_mutex);
     op->receiving_rest = rest_id;

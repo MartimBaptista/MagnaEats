@@ -1,3 +1,8 @@
+/* Sistemas Operativos 2021/2022. Projeto parte 2. Grupo SO-004
+    Realizado por: Cosmin Trandafir Nº 57101
+                   João Serafim     Nº 56376
+                   Martim Baptista  Nº 56273
+*/ 
 #include "synchronization.h"
 
 #include <stdio.h>
@@ -7,7 +12,7 @@
 
 sem_t * semaphore_create(char* name, int value){
     sem_t *semaphore;
-    sem_unlink(name); //in case they already exist from previous runs
+    sem_unlink(name);
     if ((semaphore = sem_open(name, O_CREAT, S_IROTH | S_IWOTH, value)) == SEM_FAILED) {
         perror("sem_open"); 
         exit (1);
